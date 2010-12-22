@@ -322,7 +322,7 @@ class getUK(GetGaz):
 
         #substitution pairs update:
         self.author_substitution_pairs.append((r'<.+?>|&nbsp;|\r+|\n+', ''))
-        pprint.pprint(self.author_substitution_pairs)
+
     def getAuthor (self):
         """Parse Author"""
         author = self.pattern_match_author.findall (self.data)
