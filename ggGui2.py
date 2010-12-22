@@ -2,10 +2,10 @@
 import wx
 import getGaz
 from wx.lib.wordwrap import wordwrap
-import wx.lib.delayedresult as delayedresult
 import sys
 import time
 import re
+import threading
 
 VERSION = ' '.join((getGaz.VERSION, getGaz.NAME))
 #-----------------------------START REDIR STDIN/STDERR---------------------------
@@ -21,7 +21,7 @@ class RedirectText:
 class MyFrame(wx.Frame):
     def __init__(
             self, parent=None, ID=-1, title=VERSION, pos=wx.DefaultPosition,
-            size=(900,770), style=wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION | wx.MINIMIZE_BOX
+            size=(600,770), style=wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION | wx.MINIMIZE_BOX
             ):
 
         wx.Frame.__init__(self, parent, ID, title, pos, size, style)
@@ -182,14 +182,6 @@ class MyFrame(wx.Frame):
         self.text_GOLOS_COOKIE.SetPosition((110,436))
 #-----------------------------END GOLOS BUTTTONS------------------------------------
 
-#-----------------------------START KyivPostBUTTTONS----------------------------------
-        self.button_GetKyP = wx.Button(panel, 10019, u'Затянуть KyP ')
-        self.button_GetKyP.SetPosition((15, 550))
-        self.Bind(wx.EVT_BUTTON, self.OnGetKP, self.button_GetKP)
-        self.text_KyP_URL =  wx.TextCtrl(panel, -1, 'http://www.kyivpost.com/newspaper/', size=(250, -1))
-        self.text_KyP_URL.SetPosition((110,550))
-#-----------------------------END KyivPost BUTTTONS------------------------------------
-
 #-----------------------------END GAZET BUTTONS---------------------------------
 
         self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
@@ -245,8 +237,8 @@ class MyFrame(wx.Frame):
 #---------------------------------------------------------------
 
 #------------------------------OUT LOG--------------------------
-        self.log = wx.TextCtrl(panel, -1, size=(500,600),style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-        self.log.SetPosition((450,128))
+        self.log = wx.TextCtrl(panel, -1, size=(590,190),style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+        self.log.SetPosition((2,528))
         redir = RedirectText(self.log)
         sys.stdout=redir
         sys.stderr = redir

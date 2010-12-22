@@ -1572,22 +1572,41 @@ class getKOM (GetGaz):
                 cl_urls.append(url)
         self.urls = [''.join((self.main_URL, '/?art=', url)) for url in cl_urls]
 
+class getKyivPost(GetGaz):
+
+    def __init__ (self,DATE = False,TEST = False, PROXIE = False):
+        """Initialize getCN object with basic patterns and other stuff
+            DATE may be specified in ('yyyy','mm','dd')format"""
+        GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
+        #patterns
+        self.pattern_match_title = re.compile (r'<h4>(.+?)</h4>',re.DOTALL)# Заголовок
+        self.pattern_match_author = re.compile (r'<span class="gray" style="width: 300px;">.+?|(.*?)</span>',re.DOTALL) # Автор
+        self.pattern_match_content = re.compile (r'<div class="zag-story2">.+?</span>(.+?)<div class="copyrights gray"',re.DOTALL) # Текст статьи
+        self.pattern_match_number = re.compile(r'Issue #(\d+)',re.DOTALL)
+        #atribs
+        self.main_URL = r'http://www.kyivpost.com'
+        self.work_URL = self.main_URL + '/newspaper/'
+        self.filename = 'cp_kyivpost_'
+
+    def compileUrlsList (self):
+        """finds and assigns urls to self.urls """
+        print u'Ищем статьи...'
+        data = self.getData(self.work_URL)
+        urls = re.findall(r'href="(.+?/\d+/)"',data)
+        cl_urls = []
+        for url in urls:
+            if url not in cl_urls:
+                cl_urls.append(url)
+        self.urls = [''.join((self.main_URL, url)) for url in cl_urls]
+        pprint.pprint(self.urls)
+
+class getSomething(GetGaz):
+    pass
+
 #TEST
 
 def test():
     import pprint
-    a = getGOLOS()
-    l = a.compileUrlsList()
-    pprint.pprint(l)
-
-
-
-def wCV2():
-    a = getCV()
-    a.data = a.getData('http://silskivisti.kiev.ua/18551/print.php?n=6757')
-    d = a.compileArticle('http://silskivisti.kiev.ua/18551/print.php?n=6757')
-    f = open('D:\\CV.html','w')
-    f.write(d.encode('utf-8'))
-    f.close()
-    print 'OK'
-    return d
+    a = getKyivPost()
+    a.chgPROXIE('192.168.0.101:3128')
+    a.compileUrlsList()
