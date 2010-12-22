@@ -381,16 +381,6 @@ class getUK(GetGaz):
 
     def compileUrlsList (self):
         """assign urls to self.urls of all found urls"""
-        if self.TestRun: #For testing purposes
-            self.urls = ['http://ukurier.gov.ua/index.php?news=1&id=4904',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13564',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13570',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13569',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13568',
-                            ]
-            print u'Ищем статьи...'
-            return
-
         print u'Ищем статьи...'
         urls_to_look = self.getUrlsToLook()
         self.urls = []
@@ -410,24 +400,8 @@ class getUK(GetGaz):
                 match_pdf = match_pdf.group(1)
                 content = ''.join(("\n\n Full article in PDF sheet here: ", match_pdf))
                 return content
-            content = re.sub (r'\s</p>','\n',content)
-            if self.markTables: # actually doesn't work properly
-                content = re.sub(self.patter_match_table,u'\n TABLE \n' + self.current_url,content)
-            content = re.sub (r' +',' ',content)
-            content = re.sub (r'<br><br>','\n',content)
-            content = re.sub (r'</p>','\n',content)
-            content = re.sub (r'&amp;','&',content)
-            content = re.sub (r'&rsquo;|&#39;',"'",content)
-            content = re.sub (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"',content)
-            content = re.sub (r'&mdash;|&ndash;|&middot;','-',content)
-            content = re.sub (r'&hellip;','...',content)
-            content = re.sub (r' *\n+| *\r+','\n',content)
-            content = re.sub (r'<.+?>|&nbsp;|&diams;|&shy;','',content)
-            content = re.sub (r'<.+?>','',content, re.DOTALL)
-            content = re.sub (r' \n| \r','\n',content)
-            content = re.sub (r'\n\n|\r\r','\n',content)
-            content = re.sub (r'\t','',content)
-            content = re.sub (r'\n+|\r+','\n',content)
+            for s1, s2 in self.content_substitution_pairs:
+                content = re.sub(s1, s2, content)
             content = content.strip()
             return content
         return None
