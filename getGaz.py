@@ -529,15 +529,6 @@ class getDAY (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        if self.TestRun:
-            self.urls = ['http://ukurier.gov.ua/index.php?news=1&id=4904',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13564',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13570',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13569',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13568',
-                            ]
-            print u'Ищем статьи...'
-            return
         print u'Ищем статьи...'
         data = self.getData(self.work_URL).decode('windows-1251')
         #-------------First aproximation------------------
@@ -560,7 +551,7 @@ class getDAY (GetGaz):
                 cleaned_url_list.append(item)
         #------------fill url lists-----------------
         for item in cleaned_url_list:
-            self.urls.append(self.main_URL + '290619?idsource=' + item +'&mainlang=ukr')
+            self.urls.append(self.main_URL + '290619?idsource=' + item +'&mainlang=ukr')# const parameters fo print view from day
 
     def getNumber (self):
         """Gets number of this Gazet"""
@@ -628,10 +619,6 @@ class getDAY (GetGaz):
         if content:
             content = content[0]
             content = re.sub (r'\s</p>','\n',content)
-            if self.markTables:
-                content = re.sub(self.pattern_match_table,u'\n TABLE \n' + self.current_url,content)
-##            else:
-##                content = re.sub(self.pattern_match_table,'',content)&rsquo;
             content = re.sub (r' +',' ',content)
             content = re.sub (r'\s</p>','\n',content)
             content = re.sub (r' </p>','\n',content)
