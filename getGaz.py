@@ -211,11 +211,15 @@ class GetGaz (object):
         """Parse Author of Article
         returns string containing author's name(in most cases :)) or None"""
         author = self.pattern_match_author.findall (self.data)
+        subset_for_re = (
+                            (r'&quot;', r'"'),
+                            (r'<.+?>|&nbsp;| *\r+| *\n+', r''),
+                            (r' +', r' '),
+                        )
         if author:
             author = author[0]
-            author = re.sub (r'&quot;','"',author)
-            author = re.sub (r'<.+?>|&nbsp;| *\r+| *\n+','',author)
-            author = re.sub (r' +',' ',author)
+            for s1, s2 in subset_for_re:
+                author = re.sub (s1, s2, author)
             author = author.strip('.').strip(',').strip()
             return author
         return None
