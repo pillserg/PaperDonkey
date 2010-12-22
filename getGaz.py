@@ -228,28 +228,30 @@ class GetGaz (object):
         """Parse article content
            returns string containing article content stripped of garbage(at least trys)
            or None"""
+        subset_for_re(
+                        (r'\s</p>','\n'),
+                        (r' +',' '),
+                        (r'\s</p>','\n'),
+                        (r'<br><br>','\n'),
+                        (r'</p>','\n'),
+                        (r'&amp;','&'),
+                        (r'&rsquo;|&#39;',"'"),
+                        (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"'),
+                        (r'&mdash;|&ndash;|&middot;','-'),
+                        (r'&hellip;','...'),
+                        (r' *\n+| *\r+','\n'),
+                        (r'<.+?>|&nbsp;|&diams;|&shy;',''),
+                        (r' *\n+','\n'),
+                        (r' \n| \r','\n'),
+                        (r'\n\n|\r\r','\n'),
+                        (r'\t',''),
+                        (r'\n+|\r+','\n'),
+                     )
         content = self.pattern_match_content.findall (self.data)
         if content:
             content = content[0]
-            content = re.sub (r'\s</p>','\n',content)
-            if self.markTables:
-                content = re.sub(self.patter_match_table,u'\n TABLE \n' + self.current_url,content)
-            content = re.sub (r' +',' ',content)
-            content = re.sub (r'\s</p>','\n',content)
-            content = re.sub (r'<br><br>','\n',content)
-            content = re.sub (r'</p>','\n',content)
-            content = re.sub (r'&amp;','&',content)
-            content = re.sub (r'&rsquo;|&#39;',"'",content)
-            content = re.sub (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"',content)
-            content = re.sub (r'&mdash;|&ndash;|&middot;','-',content)
-            content = re.sub (r'&hellip;','...',content)
-            content = re.sub (r' *\n+| *\r+','\n',content)
-            content = re.sub (r'<.+?>|&nbsp;|&diams;|&shy;','',content)
-            content = re.sub (r' *\n+','\n',content)
-            content = re.sub (r' \n| \r','\n',content)
-            content = re.sub (r'\n\n|\r\r','\n',content)
-            content = re.sub (r'\t','',content)
-            content = re.sub (r'\n+|\r+','\n',content)
+            for s1, s2 in subset_for_re:
+                content = re.sub (s1, s2, content)
             content = content.strip()
             return content
         return None
