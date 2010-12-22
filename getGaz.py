@@ -28,8 +28,8 @@ class GetGaz (object):
         self.pattern_match_news_author = re.compile (r'',re.DOTALL)      # Автор новостей
         self.pattern_match_content = re.compile (r'',re.DOTALL) # Текст статьи
         self.pattern_match_date = re.compile (r'',re.DOTALL) # Date
-        self.pattrn_match_number = re.compile(r'',re.DOTALL) # Номер Газеты
-        self.patter_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
+        self.pattern_match_number = re.compile(r'',re.DOTALL) # Номер Газеты
+        self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
         #patterns
 
         self.pattern_match_data_url = re.compile(r'',re.DOTALL)
@@ -271,7 +271,7 @@ class GetGaz (object):
            assigns None"""
         d = self.getData(self.work_URL)
         if d:
-            number = self.pattrn_match_number.search(d)
+            number = self.pattern_match_number.search(d)
             if number:
                 self.number = number.group(1)
             else:
@@ -308,8 +308,8 @@ class getUK(GetGaz):
         self.pattern_match_news_author = re.compile (r'<em>(.*?)</em>',re.DOTALL)      # Автор новостей
         self.pattern_match_content = re.compile (r'<div class="krat".*?>(.+?)</p></div>',re.DOTALL) # Текст статьи
         self.pattern_match_date = re.compile (r'<div style="float:left; width:50px;">(\d\d.\d\d.\d\d\d\d)</div>',re.DOTALL)
-        self.pattrn_match_number = re.compile(r'<div class="vipusk">№ (\d+)',re.DOTALL)
-        self.patter_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
+        self.pattern_match_number = re.compile(r'<div class="vipusk">№ (\d+)',re.DOTALL)
+        self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
         self.pattern_match_data_url = re.compile(r'<div class="art">(.+?<div class="pereglyad".*?>.+?)</a></div>',re.DOTALL)
         self.pattern_match_data_url_URL = re.compile(r'<div class="pereglyad".*><a href=(.+?)>',re.DOTALL)
         self.pattern_match_date_url_news = re.compile(r'<div.*class="punktirightdate".*?>(\d\d.\d\d.\d\d\d\d)</div>',re.DOTALL)
@@ -418,7 +418,7 @@ class getKP (GetGaz):
         self.pattern_match_title = re.compile (r'<h1>(.+?)</h1>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<div class="state-autor">\s+(\S+ \S+)\s*&mdash;.+?</div>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<div class="state">(.+)</div>\s*?<noindex>',re.DOTALL) # Текст статьи
-        self.patter_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
+        self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
         #patterns
         self.main_URL = r'http://kp.ua/'
         self.work_URL = self.main_URL
@@ -438,9 +438,9 @@ class getKP (GetGaz):
                 mdel = mdel.group()
                 content = content.replace(mdel,'')
             if self.markTables:
-                content = re.sub(self.patter_match_table,'\n ТАБЛИЦА \n' + self.current_url,content)
+                content = re.sub(self.pattern_match_table,'\n ТАБЛИЦА \n' + self.current_url,content)
             else:
-                content = re.sub(self.patter_match_table,'',content)
+                content = re.sub(self.pattern_match_table,'',content)
 
             content = re.sub (r' +',' ',content)
             content = re.sub (r'\s</p>','\n',content)
@@ -506,8 +506,8 @@ class getRG (GetGaz):
         self.pattern_match_title = re.compile (r'<a href=.+?class="anons_big"><font class="header_b">(.+?)</font></a>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'Автор: (.+?)\.',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<div><p>\s*(.+)</p>',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(r'Выпуск <b>№ (\d+)',re.DOTALL) # Номер Газеты
-        self.patter_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
+        self.pattern_match_number = re.compile(r'Выпуск <b>№ (\d+)',re.DOTALL) # Номер Газеты
+        self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
         self.pattern_match_data_url = re.compile(r'<td class="grey_bott".+?<a href="/(.+?)">',re.DOTALL)
         #atribs
         self.main_URL = r'http://rg.kiev.ua/'
@@ -534,7 +534,7 @@ class getDAY (GetGaz):
         self.pattern_match_author = re.compile (r'<div class="pauthor">(.+?)</div>',re.DOTALL) # Автор
         self.pattern_match_news_author = re.compile (r'',re.DOTALL)      # Автор новостей
         self.pattern_match_content = re.compile (r'<p class.*?text-content-page1.*?>(.+?)<P.*?class.*?text-content-page2.*?>',re.DOTALL) # Текст статьи
-        self.patter_match_table = re.compile(u'<td>.+?</td>',re.DOTALL)
+        self.pattern_match_table = re.compile(u'<td>.+?</td>',re.DOTALL)
         self.pattern_match_urls_bloks = re.compile(r'polosa\d+.*?</a>(.+?)colspanmenubottom',re.DOTALL)
         #atribs
         self.main_URL = r'http://www.day.kiev.ua/'
@@ -643,9 +643,9 @@ class getDAY (GetGaz):
             content = content[0]
             content = re.sub (r'\s</p>','\n',content)
             if self.markTables:
-                content = re.sub(self.patter_match_table,u'\n TABLE \n' + self.current_url,content)
+                content = re.sub(self.pattern_match_table,u'\n TABLE \n' + self.current_url,content)
 ##            else:
-##                content = re.sub(self.patter_match_table,'',content)&rsquo;
+##                content = re.sub(self.pattern_match_table,'',content)&rsquo;
             content = re.sub (r' +',' ',content)
             content = re.sub (r'\s</p>','\n',content)
             content = re.sub (r' </p>','\n',content)
@@ -685,8 +685,8 @@ class getWEND (GetGaz):
         self.pattern_match_content = re.compile (r'<p>(.+?)</p><div id="vote">',re.DOTALL) # Текст статьи
         self.pattern_match_content2 = re.compile (r'<p>(.+?)</div><div id="vote">',re.DOTALL) # Текст статьи
         self.pattern_match_content3 = re.compile (r'<p>(.+?)</blockquote><div id="vote">',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(u'<div id="issue">.*?№(\d+)',re.DOTALL) # Номер Газеты
-        self.patter_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
+        self.pattern_match_number = re.compile(u'<div id="issue">.*?№(\d+)',re.DOTALL) # Номер Газеты
+        self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
         #atribs
         self.main_URL = r'http://2000.net.ua/'
         self.work_URL = self.main_URL
@@ -701,7 +701,7 @@ class getWEND (GetGaz):
 
     def rightNumber(self):
         """Checks if the number(gazet number) of downloading article is actual"""
-        match = self.pattrn_match_number.search(self.data.decode('utf'))
+        match = self.pattern_match_number.search(self.data.decode('utf'))
         if match:
             number = match.group(1)
             if str(self.number) == number:
@@ -793,7 +793,7 @@ class getWEND (GetGaz):
             content = content[0]
             content = re.sub (r'\s</p>','\n',content)
             if self.markTables:
-                content = re.sub(self.patter_match_table,u'\n TABLE \n' + self.current_url,content)
+                content = re.sub(self.pattern_match_table,u'\n TABLE \n' + self.current_url,content)
             content = re.sub (r' +',' ',content)
             content = re.sub (r'\s</p>','\n',content)
             content = re.sub (r'</p>','\n',content)
@@ -842,8 +842,8 @@ class get2000 (getWEND):
         self.pattern_match_content = re.compile (r'<p>(.+?)</p><div id="vote">',re.DOTALL) # Текст статьи
         self.pattern_match_content2 = re.compile (r'<p>(.+?)</div><div id="vote">',re.DOTALL) # Текст статьи
         self.pattern_match_content3 = re.compile (r'<p>(.+?)</blockquote><div id="vote">',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(u'<div id="issue">.*?№(\d+)',re.DOTALL) # Номер Газеты
-        self.patter_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
+        self.pattern_match_number = re.compile(u'<div id="issue">.*?№(\d+)',re.DOTALL) # Номер Газеты
+        self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
         #atribs
         self.main_URL = r'http://2000.net.ua/'
         self.work_URL = self.main_URL
@@ -941,7 +941,7 @@ class getFacts (GetGaz):
                 content = contentSubTitle[0] + content
             content = re.sub (r'\s</p>','\n',content)
             if self.markTables:
-                content = re.sub(self.patter_match_table,u'\n TABLE \n' + self.current_url,content)
+                content = re.sub(self.pattern_match_table,u'\n TABLE \n' + self.current_url,content)
             content = re.sub (r' +',' ',content)
             content = re.sub (r'\s</p>','\n',content)
             content = re.sub (r'</p>','\n',content)
@@ -1003,7 +1003,7 @@ class getZN (GetGaz):
         self.pattern_match_title = re.compile (r'<h1>(.+?)</h1>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<div class="by">(.*?)</div>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<div id="text">(.+?)<ul class="meta-actions"  id="bottomsubmenu">',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(r' \xb9 (\d+)',re.DOTALL)
+        self.pattern_match_number = re.compile(r' \xb9 (\d+)',re.DOTALL)
         #atribs
         self.main_URL = r'http://www.zn.ua'
         self.work_URL = self.main_URL
@@ -1061,7 +1061,7 @@ class getZN (GetGaz):
     def getNumber (self):
         """Gets number of this Gazet"""
         d = self.getData(self.work_URL)
-        number = self.pattrn_match_number.search(d)
+        number = self.pattern_match_number.search(d)
         if number:
             self.number = number.group(1)
         else: self.number = None
@@ -1078,7 +1078,7 @@ class getKPR (GetGaz):
         self.pattern_match_title = re.compile (r'<h1>(.+?)</h1>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<div class="article_author">.*?<h4>(.+?)</h4>.*?</div>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<div class="article_content">(.+?)<div class="article_author">',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(ur'\xb9 (\d+)',re.DOTALL)
+        self.pattern_match_number = re.compile(ur'\xb9 (\d+)',re.DOTALL)
         self.main_URL = r'http://www.kiev-pravda.kiev.ua'
         self.work_URL = self.main_URL
         self.filename = 'cp_kpr_'
@@ -1110,7 +1110,7 @@ class getKPR (GetGaz):
     def getNumber (self):
         """Gets number of this Gazet"""
         d = self.getData(self.work_URL)
-        number = self.pattrn_match_number.search(d)
+        number = self.pattern_match_number.search(d)
         if number:
             self.number = number.group(1)
         else: self.number = None
@@ -1127,7 +1127,7 @@ class getTov (GetGaz):
         self.pattern_match_title = re.compile (r'<h1>(.+?)&nbsp;<b class="date">',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<b class=bnews>(\S+ \S+)</b>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<p align="justify">(.+)') # Текст статьи
-        self.pattrn_match_number = re.compile(r'\xd1\xe2\xb3\xe6\xe8\xe9 \xed\xee\xec\xe5\xf0 (\d+)',re.DOTALL)
+        self.pattern_match_number = re.compile(r'\xd1\xe2\xb3\xe6\xe8\xe9 \xed\xee\xec\xe5\xf0 (\d+)',re.DOTALL)
         #atribs
         self.main_URL = r'http://www.tovarish.com.ua/fresh/'
         self.work_URL = self.main_URL
@@ -1136,7 +1136,7 @@ class getTov (GetGaz):
     def getNumber (self):
         """Gets number of this Gazet"""
         d = self.getData(self.work_URL)
-        number = self.pattrn_match_number.search(d)
+        number = self.pattern_match_number.search(d)
         if number:
             self.number = number.group(1)
         else: self.number = None
@@ -1194,7 +1194,7 @@ class getCN (GetGaz):
         self.pattern_match_title = re.compile (r'<div class=title>(.+?)</div>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<div class=author>(.*?)</div>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<div class=article>(.+?)<tr><td><img src=/images/p.gif',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(r'class=number>.+?(\d+)',re.DOTALL)
+        self.pattern_match_number = re.compile(r'class=number>.+?(\d+)',re.DOTALL)
         #atribs
         self.main_URL = r'http://www.cn.com.ua'
         self.work_URL = self.main_URL
@@ -1221,7 +1221,7 @@ class getCN (GetGaz):
             content = content[0]
             content = re.sub (r'\s</p>','\n',content)
             if self.markTables:
-                content = re.sub(self.patter_match_table,u'\n TABLE \n' + self.current_url,content)
+                content = re.sub(self.pattern_match_table,u'\n TABLE \n' + self.current_url,content)
             content = re.sub (r' +',' ',content)
             content = re.sub (r'\s</p>','\n',content)
             content = re.sub (r'<br><br>','\n',content)
@@ -1256,7 +1256,7 @@ class getUMOL (GetGaz):
         self.pattern_match_title = re.compile (r'<span class=zag>(.+?)</span>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<span class=a>(.*?)</span>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<SPAN lang=RU>(.+?)</SPAN>',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(r'class="date">.+?(\d+)',re.DOTALL)
+        self.pattern_match_number = re.compile(r'class="date">.+?(\d+)',re.DOTALL)
         self.pattern_match_content2 = re.compile (r'<span class="zag">(.+?)</span>',re.DOTALL) # Подзаголовок статьи
         #atribs
         self.main_URL = r'http://www.umoloda.kiev.ua'
@@ -1293,7 +1293,7 @@ class getUMOL (GetGaz):
                 content = '\n'.join((small_content[0], content))
             content = re.sub (r'\s</p>','\n',content)
             if self.markTables:
-                content = re.sub(self.patter_match_table,u'\n TABLE \n' + self.current_url,content)
+                content = re.sub(self.pattern_match_table,u'\n TABLE \n' + self.current_url,content)
             content = re.sub (r' +',' ',content)
             content = re.sub (r'\s</p>','\n',content)
             content = re.sub (r'<br><br>','\n',content)
@@ -1330,8 +1330,8 @@ class getCV (GetGaz):
         self.pattern_match_content2 = re.compile (r'<p class=TEXT>(.+?)</p> </td>',re.DOTALL) # Текст статьи2
         self.pattern_match_content3 = re.compile (r'<p class=VRIZ>(.+?)</b></p></td>',re.DOTALL)
         self.pattern_match_date = re.compile (r'',re.DOTALL) # Date
-        self.pattrn_match_number = re.compile(r'<span style="font-size:14pt;">.+?(\d+)',re.DOTALL) # Номер Газеты
-        self.patter_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
+        self.pattern_match_number = re.compile(r'<span style="font-size:14pt;">.+?(\d+)',re.DOTALL) # Номер Газеты
+        self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
         self.pattern_match_data_url = re.compile(r'',re.DOTALL)
         #atribs
         self.main_URL = r'http://www.silskivisti.kiev.ua/'
@@ -1505,7 +1505,7 @@ class getGOLOS (GetGaz):
         self.pattern_match_title = re.compile (r'<span.+?class="ArticleTitleOnMainPage".+?>(.+?)</span>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<span id="FormView2_AutorLabel".+?>(.*?)</span>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<td class="ArticleTextOnMainPage".+?>(.+?)</td>',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(r'<span id="ctl00_FormView1_CurrentNumLabel">(\d+)',re.DOTALL)
+        self.pattern_match_number = re.compile(r'<span id="ctl00_FormView1_CurrentNumLabel">(\d+)',re.DOTALL)
         #atribs
         self.main_URL = r'http://www.golos.com.ua'
         self.work_URL = self.main_URL
@@ -1582,7 +1582,7 @@ class getKOM (GetGaz):
         self.pattern_match_title = re.compile (r'<h1>(.+?)</h1>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<div class="dateauthor">.+?<br>(.*?)<br>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<div class="patext">(.+?)</P></div>',re.DOTALL) # Текст статьи
-        self.pattrn_match_number = re.compile(r'<div class="pmnumber">.+?(\d+)',re.DOTALL)
+        self.pattern_match_number = re.compile(r'<div class="pmnumber">.+?(\d+)',re.DOTALL)
         #atribs
         self.main_URL = r'http://comments.com.ua'
         self.work_URL = self.main_URL
