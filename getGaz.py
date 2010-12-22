@@ -58,6 +58,41 @@ class GetGaz (object):
         self.current_url = ''
         self.markTables = False
 
+        #substitution lists:
+
+        self.title_substitution_pairs = [
+            (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;', r'"'),
+            (r'<.+?>|&nbsp;', r''),
+            (r'&rsquo;|&#39;', r"'"),
+            (r'&amp;', r'&'),
+            (r' *\r+| *\n+', r' '),
+            (r' +', r' '),
+            ]
+        self.author_substitution_pairs = [
+            (r'&quot;', r'"'),
+            (r'<.+?>|&nbsp;| *\r+| *\n+', r''),
+            (r' +', r' '),
+            ]
+        self.content_substitution_pairs = [
+            (r'\s</p>','\n'),
+            (r' +',' '),
+            (r'\s</p>','\n'),
+            (r'<br><br>','\n'),
+            (r'</p>','\n'),
+            (r'&amp;','&'),
+            (r'&rsquo;|&#39;',"'"),
+            (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"'),
+            (r'&mdash;|&ndash;|&middot;','-'),
+            (r'&hellip;','...'),
+            (r' *\n+| *\r+','\n'),
+            (r'<.+?>|&nbsp;|&diams;|&shy;',''),
+            (r' *\n+','\n'),
+            (r' \n| \r','\n'),
+            (r'\n\n|\r\r','\n'),
+            (r'\t',''),
+            (r'\n+|\r+','\n'),
+            ]
+
         #ERROR MeSSAGES#
         self.error_messages_dict= {'articles_not_found':u'ОШИБКА: !!! No articles found look into Help for known problems !!! (Статьи не найдены)',
                                    'articles_not_downloaded':u'ОШИБКА: !!! No articles found look into Help for known problems !!! (Что-то вроде найдено но не скачано)',
@@ -189,19 +224,11 @@ class GetGaz (object):
     def getTitle (self):
         """Parses article Title
            returns string containing article's Title or None"""
-        subsets_for_re = (
-            (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;', r'"'),
-            (r'<.+?>|&nbsp;', r''),
-            (r'&rsquo;|&#39;', r"'"),
-            (r'&amp;', r'&'),
-            (r' *\r+| *\n+', r' '),
-            (r' +', r' '),
-            )
         title = self.pattern_match_title.findall (self.data)
         if title:
             title = title[0]
             title = title.strip()
-            for s1, s2 in subsets_for_re:
+            for s1, s2 in self.title_substitution_pairs:
                 title = re.sub(s1, s2, title)
             title = title.strip()
             return title
@@ -211,14 +238,9 @@ class GetGaz (object):
         """Parse Author of Article
         returns string containing author's name(in most cases :)) or None"""
         author = self.pattern_match_author.findall (self.data)
-        subset_for_re = (
-                            (r'&quot;', r'"'),
-                            (r'<.+?>|&nbsp;| *\r+| *\n+', r''),
-                            (r' +', r' '),
-                        )
         if author:
             author = author[0]
-            for s1, s2 in subset_for_re:
+            for s1, s2 in self.author_substitution_pairs:
                 author = re.sub (s1, s2, author)
             author = author.strip('.').strip(',').strip()
             return author
@@ -228,29 +250,10 @@ class GetGaz (object):
         """Parse article content
            returns string containing article content stripped of garbage(at least trys)
            or None"""
-        subset_for_re(
-                        (r'\s</p>','\n'),
-                        (r' +',' '),
-                        (r'\s</p>','\n'),
-                        (r'<br><br>','\n'),
-                        (r'</p>','\n'),
-                        (r'&amp;','&'),
-                        (r'&rsquo;|&#39;',"'"),
-                        (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"'),
-                        (r'&mdash;|&ndash;|&middot;','-'),
-                        (r'&hellip;','...'),
-                        (r' *\n+| *\r+','\n'),
-                        (r'<.+?>|&nbsp;|&diams;|&shy;',''),
-                        (r' *\n+','\n'),
-                        (r' \n| \r','\n'),
-                        (r'\n\n|\r\r','\n'),
-                        (r'\t',''),
-                        (r'\n+|\r+','\n'),
-                     )
         content = self.pattern_match_content.findall (self.data)
         if content:
             content = content[0]
-            for s1, s2 in subset_for_re:
+            for s1, s2 in self.content_substitution_pairs:
                 content = re.sub (s1, s2, content)
             content = content.strip()
             return content
@@ -317,6 +320,9 @@ class getUK(GetGaz):
         self.usrDate = DATE
         self.markTables = False
 
+        #substitution pairs update:
+        self.author_substitution_pairs.append((r'<.+?>|&nbsp;|\r+|\n+', ''))
+        pprint.pprint(self.author_substitution_pairs)
     def getAuthor (self):
         """Parse Author"""
         author = self.pattern_match_author.findall (self.data)
@@ -324,8 +330,8 @@ class getUK(GetGaz):
             author = self.pattern_match_news_author.findall (self.data)
         if author:
             author = author[0]
-            author = re.sub (r'&quot;','"',author)
-            author = re.sub (r'<.+?>|&nbsp;|\r+|\n+','',author)
+            for s1, s2 in self.author_substitution_pairs:
+                author = re.sub(s1, s2, author)
             author = author.strip()
             return author
         return None
