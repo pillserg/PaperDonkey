@@ -18,7 +18,6 @@ class GetGaz (object):
        some paper specific tweeking is needed.
        """
 
-
     def __init__ (self,DATE = False,TEST = False, PROXIE = False):
         """Initialize GetGaz object with basic patterns and other stuff
         """
@@ -71,32 +70,32 @@ class GetGaz (object):
         assert error in self.error_messages_dict #little sanity check
         print self.error_messages_dict.get(error)
 
-    def chgExt(self,ext):
+    def chgExt(self, ext):
         """ Change extention of file to write
                 chgExt(extention)
                 returns nothing
         """
-        assert ext in ('.txt','.doc')
+        assert ext in ('.txt', '.doc')
         self.ext = ext
 
-    def chgWorkURL(self,url):
+    def chgWorkURL(self, url):
         """ change working url
         example: chgWorkURL('http://www.ukurier.gov.ua')"""
         assert 'http' in url
         self.work_URL = url
 
-    def chgOutDir(self,path):
+    def chgOutDir(self, path):
         """ Change output directory, where completed file will be saved"""
-        # should be rewritten wih os.path
+        # should be rewritten with os.path
         #if path[-1] != '\\':
             #path += '\\'
         self.PATH = path
 
-    def chgPROXIE(self,proxie):
+    def chgPROXIE(self, proxie):
         """change Proxie server address"""
         self.PROXIE = proxie
 
-    def chgNumber(self,num):
+    def chgNumber(self, num):
         """Change paper number"""
         self.number = num
 
@@ -176,7 +175,6 @@ class GetGaz (object):
         """writes processed articles into file
            to destination specified in PATH with
            name specified in fullFileName"""
-           #Need to be rewriten with os.path
         print 'Writing to: ', os.path.join (self.PATH,self.fullFileName)
         try:
             f = open (os.path.join (self.PATH,self.fullFileName),'w')
@@ -215,11 +213,10 @@ class GetGaz (object):
             author = re.sub (r'<.+?>|&nbsp;| *\r+| *\n+','',author)
             author = re.sub (r' +',' ',author)
             author = author.strip('.').strip(',').strip()
-
             return author
         return None
 
-    def getContent (self,url):
+    def getContent (self, url):
         """Parse article content
            returns string containing article content stripped of garbage(at least trys)
            or None"""
@@ -313,20 +310,14 @@ class getUK(GetGaz):
     def getAuthor (self):
         """Parse Author"""
         author = self.pattern_match_author.findall (self.data)
+        if not author:
+            author = self.pattern_match_news_author.findall (self.data)
         if author:
             author = author[0]
             author = re.sub (r'&quot;','"',author)
             author = re.sub (r'<.+?>|&nbsp;|\r+|\n+','',author)
             author = author.strip()
             return author
-        else:
-            author = self.pattern_match_news_author.findall (self.data)
-            if author:
-                author = author[0]
-                author = re.sub (r'&quot;','"',author)
-                author = re.sub (r'<.+?>|&nbsp;|\r+|\n+','',author)
-                author = author.strip()
-                return author
         return None
 
     def getUrlsToLook (self):
@@ -482,10 +473,6 @@ class getKP (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        if self.TestRun:
-            self.urls = ['http://www.kp.ua']
-            print u'Ищем статьи...'
-            return
         print u'Ищем статьи...'
         raw_data = self.getData(self.work_URL)
         big_news_data = re.search(r'<div class="txt">(.+?)<div class="press-center">',raw_data,re.DOTALL)
@@ -539,15 +526,6 @@ class getRG (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        if self.TestRun:
-            self.urls = ['http://rg.kiev.ua/page5/article18930/',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13564',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13570',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13569',
-##                            'http://ukurier.gov.ua/index.php?articl=1&id=13568',
-                            ]
-            print 'Looking for urls...'
-            return
         data = self.getData(self.work_URL)
         print 'Looking for urls...'
         self.urls = []
