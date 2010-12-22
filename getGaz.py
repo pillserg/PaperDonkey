@@ -189,16 +189,20 @@ class GetGaz (object):
     def getTitle (self):
         """Parses article Title
            returns string containing article's Title or None"""
+        subsets_for_re = (
+            (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;', r'"'),
+            (r'<.+?>|&nbsp;', r''),
+            (r'&rsquo;|&#39;', r"'"),
+            (r'&amp;', r'&'),
+            (r' *\r+| *\n+', r' '),
+            (r' +', r' '),
+            )
         title = self.pattern_match_title.findall (self.data)
         if title:
             title = title[0]
             title = title.strip()
-            title = re.sub (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"',title)
-            title = re.sub (r'<.+?>|&nbsp;','',title)
-            title = re.sub (r'&rsquo;|&#39;',"'",title)
-            title = re.sub (r'&amp;','&',title)
-            title = re.sub (r' *\r+| *\n+',' ',title)
-            title = re.sub (r' +',' ',title)
+            for s1, s2 in subsets_for_re:
+                title = re.sub(s1, s2, title)
             title = title.strip()
             return title
         return None
