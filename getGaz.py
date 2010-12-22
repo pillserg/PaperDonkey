@@ -441,22 +441,8 @@ class getKP (GetGaz):
                 content = re.sub(self.pattern_match_table,'\n ТАБЛИЦА \n' + self.current_url,content)
             else:
                 content = re.sub(self.pattern_match_table,'',content)
-
-            content = re.sub (r' +',' ',content)
-            content = re.sub (r'\s</p>','\n',content)
-            content = re.sub (r'</p>','\n',content)
-            content = re.sub (r'&amp;','&',content)
-            content = re.sub (r'&rsquo;|&#39;',"'",content)
-            content = re.sub (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"',content)
-            content = re.sub (r'&mdash;|&ndash;|&middot;','-',content)
-            content = re.sub (r'&hellip;','...',content)
-            content = re.sub (r' *\n+| *\r+','\n',content)
-            content = re.sub (r'<.+?>|&nbsp;|&diams;|&shy;','',content)
-            content = re.sub (r' *\n+','\n',content)
-            content = re.sub (r' \n| \r','\n',content)
-            content = re.sub (r'\n\n|\r\r','\n',content)
-            content = re.sub (r'\t','',content)
-            content = re.sub (r'\n+|\r+','\n',content)
+            for s1, s2 in self.content_substitution_pairs:
+                content = re.sub (s1, s2, content)
             content = content.strip()
             return content
         return None
