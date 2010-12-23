@@ -1597,8 +1597,7 @@ class getKyivPost(GetGaz):
         for url in urls:
             if url not in cl_urls:
                 cl_urls.append(url)
-        self.urls = [''.join((self.main_URL, url)) for url in cl_urls]
-        pprint.pprint(self.urls)
+        self.urls = [''.join((self.main_URL, url, 'print/')) for url in cl_urls]
 
 class getSomething(GetGaz):
     pass
