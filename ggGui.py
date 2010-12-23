@@ -21,7 +21,7 @@ class RedirectText:
 class MyFrame(wx.Frame):
     def __init__(
             self, parent=None, ID=-1, title=VERSION, pos=wx.DefaultPosition,
-            size=(900,770), style=wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION | wx.MINIMIZE_BOX
+            size=(1005,660), style=wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION | wx.MINIMIZE_BOX
             ):
 
         wx.Frame.__init__(self, parent, ID, title, pos, size, style)
@@ -96,6 +96,7 @@ class MyFrame(wx.Frame):
                                           'http://www.facts.kiev.ua/archive/%s'%self.localDate(Format='FACTS'),
                                           size=(250, -1))
         self.text_facts_url.SetPosition((110,166))
+        self.button_GetFacts.Disable()
 #-----------------------------END FACTS BUTTTONS--------------------------------
 
 #-----------------------------START ZN BUTTTONS-----------------------------
@@ -178,16 +179,17 @@ class MyFrame(wx.Frame):
         self.button_GetGOLOS = wx.Button(panel, 10018, u'Затянуть GOL ')
         self.button_GetGOLOS.SetPosition((15, 435))
         self.Bind(wx.EVT_BUTTON, self.OnGetGOLOS, self.button_GetGOLOS)
-        self.text_GOLOS_COOKIE =  wx.TextCtrl(panel, -1, 'PASTE COOKIE HERE...', size=(300, 80), style = wx.TE_MULTILINE)
+        self.text_GOLOS_COOKIE =  wx.TextCtrl(panel, -1, 'PASTE COOKIE HERE...', size=(250, -1),)
         self.text_GOLOS_COOKIE.SetPosition((110,436))
+        self.button_GetGOLOS.Disable()
 #-----------------------------END GOLOS BUTTTONS------------------------------------
 
 #-----------------------------START KyivPostBUTTTONS----------------------------------
         self.button_GetKyP = wx.Button(panel, 10019, u'Затянуть KyP ')
-        self.button_GetKyP.SetPosition((15, 550))
-        self.Bind(wx.EVT_BUTTON, self.OnGetKP, self.button_GetKP)
+        self.button_GetKyP.SetPosition((15, 465))
+        self.Bind(wx.EVT_BUTTON, self.OnGetKyP, self.button_GetKyP)
         self.text_KyP_URL =  wx.TextCtrl(panel, -1, 'http://www.kyivpost.com/newspaper/', size=(250, -1))
-        self.text_KyP_URL.SetPosition((110,550))
+        self.text_KyP_URL.SetPosition((110,465))
 #-----------------------------END KyivPost BUTTTONS------------------------------------
 
 #-----------------------------END GAZET BUTTONS---------------------------------
@@ -245,8 +247,8 @@ class MyFrame(wx.Frame):
 #---------------------------------------------------------------
 
 #------------------------------OUT LOG--------------------------
-        self.log = wx.TextCtrl(panel, -1, size=(500,600),style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-        self.log.SetPosition((450,128))
+        self.log = wx.TextCtrl(panel, -1, size=(450,590),style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+        self.log.SetPosition((550,15))
         redir = RedirectText(self.log)
         sys.stdout=redir
         sys.stderr = redir
@@ -346,9 +348,9 @@ class MyFrame(wx.Frame):
 
     def OnInfo(self, event):
         info = wx.AboutDialogInfo()
-        info.Name = u"Контекст PaperDonkey"
-        info.Version = "0.9.2"
-        info.Copyright = "(C) 2010 PiLL"
+        info.Name = getGaz.NAME
+        info.Version = getGaz.VERSION
+        info.Copyright = "(C) 2011 PiLL"
         info.Description = ' '
         info.Developers = [ "PiLL",]
         wx.AboutBox(info)
@@ -1077,7 +1079,51 @@ class MyFrame(wx.Frame):
 
         # get ready for next job:
         self.button_GetKOM.Enable(True)
-#-----------------END GET GOLOS HANDLER (OUT THREAD)--------------------------
+#-----------------END GET KOMENTARI HANDLER (OUT THREAD)--------------------------
+
+#-----------------START GET KyivPost---------
+
+    def OnGetKyP(self, event):
+        print 'OK'
+        self.button_GetKyP.Enable(False)
+        print u'Тянем KievPost'
+        self.abortEvent.clear()
+        self.jobID += 1
+        delayedresult.startWorker(self._resultConsumerKyP,
+                                  self._resultProducerKyP,
+                                  wargs=(self.jobID,self.abortEvent),
+                                  jobID=self.jobID)
+
+    def _resultProducerKyP(self, jobID, abortEvent):
+        """call getGaz to get KyP."""
+        print 'OK'
+        gazet = getGaz.getKyivPost(TEST = False,PROXIE = self.PROXIE)
+        if self.cb_PROXIE.IsChecked():
+            print 'Working through: ' + self.PROXIE
+            gazet.chgPROXIE(self.PROXIE)
+        if self.OutDir:
+            gazet.chgOutDir(self.OutDir)
+        gazet.chgWorkURL(str(self.text_KyP_URL.GetValue()))
+        gazet.chgExt(self.ext)
+        print 'Looking in ',gazet.work_URL
+        gazet.process()
+
+        return jobID
+
+
+    def _resultConsumerKyP(self, delayedResult):
+        jobID = delayedResult.getJobID()
+        assert jobID == self.jobID
+        #try:
+        result = delayedResult.get()
+        #except:
+            #print u"Попытка стянуть GOLOS закончилась провалом"
+            #self.button_GetGOLOS.Enable(True)
+            #return
+
+        # get ready for next job:
+        self.button_GetKyP.Enable(True)
+#-----------------END GET KyivPost HANDLER (OUT THREAD)--------------------------
 
 class MyApp(wx.App):
     """Application class"""

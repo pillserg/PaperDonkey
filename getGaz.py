@@ -1580,7 +1580,7 @@ class getKyivPost(GetGaz):
         GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
         #patterns
         self.pattern_match_title = re.compile (r'<h4>(.+?)</h4>',re.DOTALL)# Заголовок
-        self.pattern_match_author = re.compile (r'<span class="gray" style="width: 300px;">.+?|(.*?)</span>',re.DOTALL) # Автор
+        self.pattern_match_author = re.compile (r'<span class="gray" style="width: 300px;">.+?\|(.+?)</span>',re.DOTALL) # Автор
         self.pattern_match_content = re.compile (r'<div class="zag-story2">.+?</span>(.+?)<div class="copyrights gray"',re.DOTALL) # Текст статьи
         self.pattern_match_number = re.compile(r'Issue #(\d+)',re.DOTALL)
         #atribs
@@ -1608,5 +1608,6 @@ class getSomething(GetGaz):
 def test():
     import pprint
     a = getKyivPost()
-    a.chgPROXIE('192.168.0.101:3128')
-    a.compileUrlsList()
+    a.data = a.getData('http://www.kyivpost.com/news/guide/general/detail/93029/print/')
+    return a
+    a = test()
