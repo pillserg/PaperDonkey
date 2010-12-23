@@ -21,7 +21,7 @@ class RedirectText:
 class MyFrame(wx.Frame):
     def __init__(
             self, parent=None, ID=-1, title=VERSION, pos=wx.DefaultPosition,
-            size=(1005,660), style=wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION | wx.MINIMIZE_BOX
+            size=(1005,600), style=wx.SYSTEM_MENU | wx.CLOSE_BOX | wx.CAPTION | wx.MINIMIZE_BOX
             ):
 
         wx.Frame.__init__(self, parent, ID, title, pos, size, style)
@@ -192,6 +192,14 @@ class MyFrame(wx.Frame):
         self.text_KyP_URL.SetPosition((110,465))
 #-----------------------------END KyivPost BUTTTONS------------------------------------
 
+#-----------------------------START VD BUTTTONS----------------------------------
+        self.button_GetVD = wx.Button(panel, 10019, u'Затянуть VD ')
+        self.button_GetVD.SetPosition((15, 495))
+        self.Bind(wx.EVT_BUTTON, self.OnGetKyP, self.button_GetKyP)
+        self.text_VD_URL =  wx.TextCtrl(panel, -1, 'vd', size=(250, -1))
+        self.text_VD_URL.SetPosition((110,495))
+#-----------------------------END VD BUTTTONS------------------------------------
+
 #-----------------------------END GAZET BUTTONS---------------------------------
 
         self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
@@ -247,7 +255,7 @@ class MyFrame(wx.Frame):
 #---------------------------------------------------------------
 
 #------------------------------OUT LOG--------------------------
-        self.log = wx.TextCtrl(panel, -1, size=(450,590),style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+        self.log = wx.TextCtrl(panel, -1, size=(450,511),style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
         self.log.SetPosition((550,15))
         redir = RedirectText(self.log)
         sys.stdout=redir
