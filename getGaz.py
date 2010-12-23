@@ -1599,7 +1599,21 @@ class getKyivPost(GetGaz):
                 cl_urls.append(url)
         self.urls = [''.join((self.main_URL, url, 'print/')) for url in cl_urls]
 
-class getSomething(GetGaz):
+    def getContent (self, url):
+        """Parse article content
+           returns string containing article content stripped of garbage(at least trys)
+           or None"""
+        content = self.pattern_match_content.findall (self.data)
+        if content:
+            content = content[0]
+            content = re.sub(r'<blockquote> <strong>.+?</strong><br />', '', content)
+            for s1, s2 in self.content_substitution_pairs:
+                content = re.sub (s1, s2, content)
+            content = content.strip()
+            return content
+        return None
+
+class getVD(GetGaz):
     pass
 
 #TEST
@@ -1607,6 +1621,6 @@ class getSomething(GetGaz):
 def test():
     import pprint
     a = getKyivPost()
-    a.data = a.getData('http://www.kyivpost.com/news/guide/general/detail/93029/print/')
+    a.data = a.getData('http://www.kyivpost.com/news/guide/world-in-uktaine/detail/93019/print/')
     return a
-    a = test()
+a = test()
