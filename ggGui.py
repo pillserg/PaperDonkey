@@ -193,11 +193,12 @@ class MyFrame(wx.Frame):
 #-----------------------------END KyivPost BUTTTONS------------------------------------
 
 #-----------------------------START VD BUTTTONS----------------------------------
-        self.button_GetVD = wx.Button(panel, 10019, u'Затянуть VD ')
+        self.button_GetVD = wx.Button(panel, 10020, u'Затянуть VD ')
         self.button_GetVD.SetPosition((15, 495))
         self.Bind(wx.EVT_BUTTON, self.OnGetKyP, self.button_GetKyP)
         self.text_VD_URL =  wx.TextCtrl(panel, -1, 'vd', size=(250, -1))
         self.text_VD_URL.SetPosition((110,495))
+        self.button_GetVD.Disable()
 #-----------------------------END VD BUTTTONS------------------------------------
 
 #-----------------------------END GAZET BUTTONS---------------------------------
@@ -255,7 +256,7 @@ class MyFrame(wx.Frame):
 #---------------------------------------------------------------
 
 #------------------------------OUT LOG--------------------------
-        self.log = wx.TextCtrl(panel, -1, size=(450,511),style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+        self.log = wx.TextCtrl(panel, -1, size=(450,511),style = wx.TE_MULTILINE|wx.TE_READONLY)
         self.log.SetPosition((550,15))
         redir = RedirectText(self.log)
         sys.stdout=redir
