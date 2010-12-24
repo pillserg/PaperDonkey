@@ -1601,7 +1601,7 @@ class getVD(GetGaz):
 
 def test():
     import pprint
-    a = getUMOL()
-    a.data = a.getData('http://umoloda.kiev.ua/number/1808/164/64165/')
+    a = getUK()
+    a.data = a.getData('http://ukurier.gov.ua/index.php?articl=1&id=17036')
     return a
 a = test()
