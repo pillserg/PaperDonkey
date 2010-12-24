@@ -1620,11 +1620,16 @@ class getVD(GetGaz):
         content = self.pattern_match_content.findall (self.data)
         if content:
             content = content[0]
+            img_urls_list = re.findall(r'<img.+?src="/(.+?)"', content, re.DOTALL)
             content = re.sub(r'\n', ' ', content)
             content = re.sub(r'<a href.+?</a>', '', content, re.DOTALL)
             for s1, s2 in self.content_substitution_pairs:
                 content = re.sub (s1, s2, content)
             content = content.strip()
+            if img_urls_list:
+                img_urls_list = [''.join((self.main_URL, url)) for url in img_urls_list]
+                img_urls_string = '\n'.join((img_urls_list))
+                content = '\n\n Images Links \n\n'.join((content, img_urls_string))
             return content
         return None
 
@@ -1635,7 +1640,7 @@ def test():
     a = getVD()
     a.work_URL = 'http://www.vd.net.ua/journal/269'
     a.getNumber()
-    a.data = a.getData('http://www.vd.net.ua/rubrics-8/15536/?prvers=1')
+    a.data = a.getData('http://www.vd.net.ua/rubrics-6/15525/?prvers=1')
     print a
     return a
 a = test()
