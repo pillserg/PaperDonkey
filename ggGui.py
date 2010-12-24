@@ -46,6 +46,7 @@ class MyFrame(wx.Frame):
         self.text_UK_Date.SetPosition((110,16))
         self.Bind(wx.EVT_BUTTON, self.OnGetUK, self.button_GetUK)
         self.Bind(wx.EVT_TEXT, self.EvtText_UK_Date, self.text_UK_Date)
+
 #-----------------------------END UK BUTTTONS------------------------------------
 
 #-----------------------------START RG BUTTTONS----------------------------------
@@ -168,7 +169,7 @@ class MyFrame(wx.Frame):
 #-----------------------------END CV BUTTTONS------------------------------------
 
 #-----------------------------START KOM BUTTTONS----------------------------------
-        self.button_GetKOM = wx.Button(panel, 10017, u'Затянуть KOM ')
+        self.button_GetKOM = wx.Button(panel, 10017, u'Затянуть KOM')
         self.button_GetKOM.SetPosition((15, 405))
         self.Bind(wx.EVT_BUTTON, self.OnGetKOM, self.button_GetKOM)
         self.text_KOM_URL =  wx.TextCtrl(panel, -1, 'http://comments.com.ua', size=(250, -1))
@@ -192,7 +193,7 @@ class MyFrame(wx.Frame):
 #-----------------------------END KyivPost BUTTTONS------------------------------------
 
 #-----------------------------START VD BUTTTONS----------------------------------
-        self.button_GetVD = wx.Button(panel, 10020, u'Затянуть VD ')
+        self.button_GetVD = wx.Button(panel, 10020, u'Затянуть VD   ')
         self.button_GetVD.SetPosition((15, 495))
         self.Bind(wx.EVT_BUTTON, self.OnGetVD, self.button_GetVD)
         self.text_VD_URL =  wx.TextCtrl(panel, -1, 'http://www.vd.net.ua/journal/269', size=(250, -1))
@@ -245,7 +246,7 @@ class MyFrame(wx.Frame):
 
 #------------------------------OUTPUT DIR CONTROL---------------
 
-        self.button_Out_Dir = wx.Button(panel,-1, u'Куды складывать')
+        self.button_Out_Dir = wx.Button(panel,-1, u'      Сохранять в...     ')
         self.button_Out_Dir.SetPosition((400,75))
         self.Bind(wx.EVT_BUTTON, self.CngOutDir, self.button_Out_Dir)
         self.text_OUT_DIR =  wx.TextCtrl(panel, -1, 'D:\\', size=(125, -1))
