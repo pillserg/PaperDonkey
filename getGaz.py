@@ -1280,7 +1280,7 @@ class getCV (GetGaz):
         self.pattern_match_title = re.compile (r'<p class=ZAGOL30>(.+?)</p>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<p class=AVPOSADA>(.+?)</p>',re.DOTALL) # Автор
         self.pattern_match_news_author = re.compile (r'',re.DOTALL)      # Автор новостей
-        self.pattern_match_content = re.compile (r'<p class=VRIZ>(.+?)</p> </td>',re.DOTALL) # Текст статьи
+        self.pattern_match_content = re.compile  (r'<p class=VRIZ>(.+?)</p></td>',re.DOTALL) # Текст статьи
         self.pattern_match_content2 = re.compile (r'<p class=TEXT>(.+?)</p> </td>',re.DOTALL) # Текст статьи2
         self.pattern_match_content3 = re.compile (r'<p class=VRIZ>(.+?)</b></p></td>',re.DOTALL)
         self.pattern_match_date = re.compile (r'',re.DOTALL) # Date
@@ -1316,16 +1316,8 @@ class getCV (GetGaz):
             content = self.pattern_match_content3.findall (self.data)
         if content:
             content = content[0]
-            content = re.sub (r'\n+|\r+','',content)
-            content = re.sub (r'\s</p>','\n',content)
-            content = re.sub (r'</p>','\n',content)
-            content = re.sub (r'&quot;','"',content)
-            content = re.sub (r' *\n+| *\r+','\n',content)
-            content = re.sub (r'<.+?>|&nbsp;','',content)
-            content = re.sub (r' *\n+','\n',content)
-            content = re.sub (r' +',' ',content)
-            content = re.sub (r' \n| \r','\n',content)
-            content = re.sub (r'\n\n|\r\r','\n',content)
+            for s1, s2 in self.content_substitution_pairs:
+                content = re.sub (s1, s2 ,content)
             content = content.strip()
             return content
         return None
@@ -1601,7 +1593,7 @@ class getVD(GetGaz):
 
 def test():
     import pprint
-    a = getUK()
-    a.data = a.getData('http://ukurier.gov.ua/index.php?articl=1&id=17036')
+    a = getCV()
+    a.data = a.getData('http://www.silskivisti.kiev.ua/18587/print.php?n=7654')
     return a
 a = test()
