@@ -84,14 +84,10 @@ class GetGaz (object):
             (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"'),
             (r'&mdash;|&ndash;|&middot;','-'),
             (r'&hellip;','...'),
-            (r' *\n+| *\r+','\n'),
             (r'<.+?>|&nbsp;|&diams;|&shy;',''),
-            (r' *\n+','\n'),
-            (r' \n| \r','\n'),
-            (r'\n\n|\r\r','\n'),
             (r'\t',''),
-            (r'\n+|\r+','\n'),
-            (r'\n\n|\r\r','\n'),
+            (r'\r','\n'),
+            (r'\n+','\n'),
             ]
 
         #ERROR MeSSAGES#
