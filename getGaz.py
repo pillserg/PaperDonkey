@@ -76,6 +76,7 @@ class GetGaz (object):
         self.content_substitution_pairs = [
             (r'\s</p>','\n'),
             (r' +',' '),
+            (r'&#12288;', ''),
             (r'\s</p>','\n'),
             (r'<br><br>','\n'),
             (r'</p>','\n'),
@@ -1606,6 +1607,6 @@ class getVD(GetGaz):
 def test():
     import pprint
     a = getUMOL()
-    a.data = a.getData('http://www.umoloda.kiev.ua/number/1808/325/64164/')
+    a.data = a.getData('http://umoloda.kiev.ua/number/1808/164/64165/')
     return a
 a = test()
