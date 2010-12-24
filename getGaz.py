@@ -91,6 +91,7 @@ class GetGaz (object):
             (r'\n\n|\r\r','\n'),
             (r'\t',''),
             (r'\n+|\r+','\n'),
+            (r'\n\n|\r\r','\n'),
             ]
 
         #ERROR MeSSAGES#
@@ -1236,6 +1237,9 @@ class getUMOL (GetGaz):
         self.work_URL = self.main_URL
         self.filename = 'cp_umol_'
 
+        self.content_substitution_pairs.append((r'i','\xb3'))
+        self.content_substitution_pairs.append((r'&#12288;|&#8239',''))
+
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
         print u'Ищем статьи...'
@@ -1264,26 +1268,8 @@ class getUMOL (GetGaz):
             content = '\n'.join(content)
             if small_content:
                 content = '\n'.join((small_content[0], content))
-
-            content = re.sub (r'\s</p>','\n',content)
-            content = re.sub (r' +',' ',content)
-            content = re.sub (r'\s</p>','\n',content)
-            content = re.sub (r'<br><br>','\n',content)
-            content = re.sub (r'</p>','\n',content)
-            content = re.sub (r'&amp;','&',content)
-            content = re.sub (r'&rsquo;|&#39;',"'",content)
-            content = re.sub (r'&#12288;','',content)
-            content = re.sub (r'i','\xb3',content)
-            content = re.sub (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"',content)
-            content = re.sub (r'&mdash;|&ndash;|&middot;','-',content)
-            content = re.sub (r'&hellip;','...',content)
-            content = re.sub (r' *\n+| *\r+','\n',content)
-            content = re.sub (r'<.+?>|&nbsp;|&diams;|&shy;','',content)
-            content = re.sub (r' *\n+','\n',content)
-            content = re.sub (r' \n| \r','\n',content)
-            content = re.sub (r'\n\n|\r\r','\n',content)
-            content = re.sub (r'\t','',content)
-            content = re.sub (r'\n+|\r+','\n',content)
+            for s1, s2 in self.content_substitution_pairs:
+                content = re.sub(s1, s2, content)
             content = content.strip()
             return content
         return None
@@ -1620,7 +1606,6 @@ class getVD(GetGaz):
 def test():
     import pprint
     a = getUMOL()
-    #a.data = a.getData('http://www.umoloda.kiev.ua/number/1808/325/64164/  ')
-    a.data = a.getData('http://www.umoloda.kiev.ua/print/84/45/64164/')
+    a.data = a.getData('http://www.umoloda.kiev.ua/number/1808/325/64164/')
     return a
 a = test()

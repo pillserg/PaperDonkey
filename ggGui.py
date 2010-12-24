@@ -261,6 +261,7 @@ class MyFrame(wx.Frame):
         redir = RedirectText(self.log)
         sys.stdout=redir
         sys.stderr = redir
+#------------------------------Config Dict--------------------------
         if self.cfg_dict:
             self.text_RG_URL.SetValue(self.cfg_dict.get('RG_URL'))
             self.text_DAY_URL.SetValue(self.cfg_dict.get('DAY_URL'))
