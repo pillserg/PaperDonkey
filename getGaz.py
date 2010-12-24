@@ -1595,7 +1595,7 @@ class getVD(GetGaz):
         #patterns
         self.pattern_match_title = re.compile (r'<h2>(.+?)</h2>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<i>(.+?)</i>',re.DOTALL) # Автор
-        self.pattern_match_content = re.compile (r'<br/><br/>(.+)</p>', re.DOTALL) # Текст статьи
+        self.pattern_match_content = re.compile (r'\)<br/><br/>(.+)</p>', re.DOTALL) # Текст статьи
         self.pattern_match_number = re.compile(r'<b style="font-size: 18px">&nbsp;</b>\[(\d+)\]',re.DOTALL)
         #atribs
         self.main_URL = r'http://www.vd.net.ua/'
@@ -1620,7 +1620,8 @@ class getVD(GetGaz):
         content = self.pattern_match_content.findall (self.data)
         if content:
             content = content[0]
-            content = re.sub(r'<blockquote> <strong>.+?</strong><br />', '', content)
+            content = re.sub(r'\n', ' ', content)
+            content = re.sub(r'<a href.+?</a>', '', content, re.DOTALL)
             for s1, s2 in self.content_substitution_pairs:
                 content = re.sub (s1, s2, content)
             content = content.strip()
