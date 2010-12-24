@@ -7,7 +7,7 @@ import urllib2
 import os
 import pprint
 
-VERSION = '0.9.4'
+VERSION = '0.9.6'
 NAME = u'Контекст PaperDonkey'
 
 class GetGaz (object):
@@ -77,7 +77,6 @@ class GetGaz (object):
             (r'\s</p>','\n'),
             (r' +',' '),
             (r'&#12288;', ''),
-            (r'\s</p>','\n'),
             (r'<br><br>','\n'),
             (r'</p>','\n'),
             (r'&amp;','&'),
