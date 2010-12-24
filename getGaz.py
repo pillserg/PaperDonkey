@@ -1228,7 +1228,7 @@ class getUMOL (GetGaz):
         #patterns
         self.pattern_match_title = re.compile (r'<span class=zag>(.+?)</span>',re.DOTALL)# Заголовок
         self.pattern_match_author = re.compile (r'<span class=a>(.*?)</span>',re.DOTALL) # Автор
-        self.pattern_match_content = re.compile (r'<SPAN lang=RU>(.+?)</SPAN>',re.DOTALL) # Текст статьи
+        self.pattern_match_content = re.compile (r'<SPAN lang=[U|R][K|U]>(.+?)</SPAN>',re.DOTALL) # Текст статьи
         self.pattern_match_number = re.compile(r'class="date">.+?(\d+)',re.DOTALL)
         self.pattern_match_content2 = re.compile (r'<span class="zag">(.+?)</span>',re.DOTALL) # Подзаголовок статьи
         #atribs
@@ -1264,9 +1264,8 @@ class getUMOL (GetGaz):
             content = '\n'.join(content)
             if small_content:
                 content = '\n'.join((small_content[0], content))
+
             content = re.sub (r'\s</p>','\n',content)
-            if self.markTables:
-                content = re.sub(self.pattern_match_table,u'\n TABLE \n' + self.current_url,content)
             content = re.sub (r' +',' ',content)
             content = re.sub (r'\s</p>','\n',content)
             content = re.sub (r'<br><br>','\n',content)
@@ -1620,7 +1619,8 @@ class getVD(GetGaz):
 
 def test():
     import pprint
-    a = getKyivPost()
-    a.data = a.getData('http://www.kyivpost.com/news/guide/world-in-uktaine/detail/93019/print/')
+    a = getUMOL()
+    #a.data = a.getData('http://www.umoloda.kiev.ua/number/1808/325/64164/  ')
+    a.data = a.getData('http://www.umoloda.kiev.ua/print/84/45/64164/')
     return a
 a = test()
