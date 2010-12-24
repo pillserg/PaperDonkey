@@ -1149,7 +1149,7 @@ class MyFrame(wx.Frame):
     def _resultProducerVD(self, jobID, abortEvent):
         """call getGaz to get VD."""
         print 'OK'
-        gazet = getGaz.getKyivPost(TEST = False,PROXIE = self.PROXIE)
+        gazet = getGaz.getVD(TEST = False,PROXIE = self.PROXIE)
         if self.cb_PROXIE.IsChecked():
             print 'Working through: ' + self.PROXIE
             gazet.chgPROXIE(self.PROXIE)
