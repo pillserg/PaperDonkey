@@ -30,7 +30,7 @@ class MyFrame(wx.Frame):
         self.SetIcon(favicon)
         self.CenterOnScreen()
         self.CreateStatusBar()
-        self.SetStatusText("This is the statusbar")
+        self.SetStatusText("PPDonkey is ready")
         self.PROXIE = False
         self.Date_UK = False
         self.OutDir = ''
@@ -243,6 +243,10 @@ class MyFrame(wx.Frame):
 
         sizer.Add(self.rb, 0, wx.ALL, 20)
         self.rb.SetPosition((400,135))
+
+#TEST
+        self.BIG_BU = wx.TextCtrl(panel, id = -1, '%s'%('12',))
+        self.BIG_BU.SetPosition((400,140))
 
 #------------------------------OUTPUT DIR CONTROL---------------
 
