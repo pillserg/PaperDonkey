@@ -1636,5 +1636,6 @@ def test():
     a.work_URL = 'http://www.vd.net.ua/journal/269'
     a.getNumber()
     a.data = a.getData('http://www.vd.net.ua/rubrics-8/15536/?prvers=1')
+    print a
     return a
 a = test()
