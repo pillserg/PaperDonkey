@@ -181,7 +181,6 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.OnGetGOLOS, self.button_GetGOLOS)
         self.text_GOLOS_COOKIE =  wx.TextCtrl(panel, -1, 'PASTE COOKIE HERE...', size=(250, -1),)
         self.text_GOLOS_COOKIE.SetPosition((110,436))
-        self.button_GetGOLOS.Disable()
 #-----------------------------END GOLOS BUTTTONS------------------------------------
 
 #-----------------------------START KyivPostBUTTTONS----------------------------------
@@ -195,10 +194,9 @@ class MyFrame(wx.Frame):
 #-----------------------------START VD BUTTTONS----------------------------------
         self.button_GetVD = wx.Button(panel, 10020, u'Затянуть VD ')
         self.button_GetVD.SetPosition((15, 495))
-        self.Bind(wx.EVT_BUTTON, self.OnGetKyP, self.button_GetKyP)
-        self.text_VD_URL =  wx.TextCtrl(panel, -1, 'vd', size=(250, -1))
+        self.Bind(wx.EVT_BUTTON, self.OnGetVD, self.button_GetVD)
+        self.text_VD_URL =  wx.TextCtrl(panel, -1, 'http://www.vd.net.ua/journal/269', size=(250, -1))
         self.text_VD_URL.SetPosition((110,495))
-        self.button_GetVD.Disable()
 #-----------------------------END VD BUTTTONS------------------------------------
 
 #-----------------------------END GAZET BUTTONS---------------------------------
@@ -1134,6 +1132,43 @@ class MyFrame(wx.Frame):
         # get ready for next job:
         self.button_GetKyP.Enable(True)
 #-----------------END GET KyivPost HANDLER (OUT THREAD)--------------------------
+
+#-----------------START GET VD---------
+
+    def OnGetVD(self, event):
+        print 'OK'
+        self.button_GetVD.Enable(False)
+        print u'Тянем VD'
+        self.abortEvent.clear()
+        self.jobID += 1
+        delayedresult.startWorker(self._resultConsumerVD,
+                                  self._resultProducerVD,
+                                  wargs=(self.jobID,self.abortEvent),
+                                  jobID=self.jobID)
+
+    def _resultProducerVD(self, jobID, abortEvent):
+        """call getGaz to get VD."""
+        print 'OK'
+        gazet = getGaz.getKyivPost(TEST = False,PROXIE = self.PROXIE)
+        if self.cb_PROXIE.IsChecked():
+            print 'Working through: ' + self.PROXIE
+            gazet.chgPROXIE(self.PROXIE)
+        if self.OutDir:
+            gazet.chgOutDir(self.OutDir)
+        gazet.chgWorkURL(str(self.text_VD_URL.GetValue()))
+        gazet.chgExt(self.ext)
+        print 'Looking in ',gazet.work_URL
+        gazet.process()
+
+        return jobID
+
+
+    def _resultConsumerVD(self, delayedResult):
+        jobID = delayedResult.getJobID()
+        assert jobID == self.jobID
+        result = delayedResult.get()
+        self.button_GetVD.Enable(True)
+#-----------------END GET VD HANDLER (OUT THREAD)--------------------------
 
 class MyApp(wx.App):
     """Application class"""

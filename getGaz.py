@@ -5,7 +5,7 @@ import time
 import sys
 import urllib2
 import os
-import pprint
+from pprint import pprint
 
 VERSION = '0.9.6'
 NAME = u'Контекст PaperDonkey'
@@ -1444,7 +1444,7 @@ class getCV (GetGaz):
 class getGOLOS (GetGaz):
     """GET GOLOS      """
     def __init__ (self,DATE = False,TEST = False, PROXIE = False):
-        """Initialize getgOLOS object with basic patterns and other stuff
+        """Initialize getGOLOS object with basic patterns and other stuff
             DATE may be specified in ('yyyy','mm','dd')format"""
         GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
         #patterns
@@ -1521,7 +1521,7 @@ class getKOM (GetGaz):
     """GET KOM      """
 
     def __init__ (self,DATE = False,TEST = False, PROXIE = False):
-        """Initialize getCN object with basic patterns and other stuff
+        """Initialize getKOM object with basic patterns and other stuff
             DATE may be specified in ('yyyy','mm','dd')format"""
         GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
         #patterns
@@ -1548,7 +1548,7 @@ class getKOM (GetGaz):
 class getKyivPost(GetGaz):
 
     def __init__ (self,DATE = False,TEST = False, PROXIE = False):
-        """Initialize getCN object with basic patterns and other stuff
+        """Initialize getKyP object with basic patterns and other stuff
             DATE may be specified in ('yyyy','mm','dd')format"""
         GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
         #patterns
@@ -1587,13 +1587,53 @@ class getKyivPost(GetGaz):
         return None
 
 class getVD(GetGaz):
-    pass
+
+    def __init__ (self,DATE = False,TEST = False, PROXIE = False):
+        """Initialize getVD object with basic patterns and other stuff
+            DATE may be specified in ('yyyy','mm','dd')format"""
+        GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
+        #patterns
+        self.pattern_match_title = re.compile (r'<h2>(.+?)</h2>',re.DOTALL)# Заголовок
+        self.pattern_match_author = re.compile (r'<i>(.+?)</i>',re.DOTALL) # Автор
+        self.pattern_match_content = re.compile (r'<br/><br/>(.+)</p>', re.DOTALL) # Текст статьи
+        self.pattern_match_number = re.compile(r'<b style="font-size: 18px">&nbsp;</b>\[(\d+)\]',re.DOTALL)
+        #atribs
+        self.main_URL = r'http://www.vd.net.ua/'
+        self.work_URL = self.main_URL
+        self.filename = 'cp_vd_'
+
+    def compileUrlsList (self):
+        """finds and assigns urls to self.urls """
+        print u'Ищем статьи...'
+        data = self.getData(self.work_URL)
+        urls = re.findall(r'href="(/rubrics-\d+/\d+/)"',data)
+        cl_urls = []
+        for url in urls:
+            if url not in cl_urls:
+                cl_urls.append(url)
+        self.urls = [''.join((self.work_URL, url, '?prvers=1')) for url in cl_urls]
+
+    def getContent (self, url):
+        """Parse article content
+           returns string containing article content stripped of garbage(at least trys)
+           or None"""
+        content = self.pattern_match_content.findall (self.data)
+        if content:
+            content = content[0]
+            content = re.sub(r'<blockquote> <strong>.+?</strong><br />', '', content)
+            for s1, s2 in self.content_substitution_pairs:
+                content = re.sub (s1, s2, content)
+            content = content.strip()
+            return content
+        return None
 
 #TEST
 
 def test():
     import pprint
-    a = getCV()
-    a.data = a.getData('http://www.silskivisti.kiev.ua/18587/print.php?n=7654')
+    a = getVD()
+    a.work_URL = 'http://www.vd.net.ua/journal/269'
+    a.getNumber()
+    a.data = a.getData('http://www.vd.net.ua/rubrics-8/15536/?prvers=1')
     return a
 a = test()
