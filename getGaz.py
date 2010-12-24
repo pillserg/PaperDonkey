@@ -1606,12 +1606,12 @@ class getVD(GetGaz):
         """finds and assigns urls to self.urls """
         print u'Ищем статьи...'
         data = self.getData(self.work_URL)
-        urls = re.findall(r'href="(/rubrics-\d+/\d+/)"',data)
+        urls = re.findall(r'href="/(rubrics-\d+/\d+/)"',data)
         cl_urls = []
         for url in urls:
             if url not in cl_urls:
                 cl_urls.append(url)
-        self.urls = [''.join((self.work_URL, url, '?prvers=1')) for url in cl_urls]
+        self.urls = [''.join((self.main_URL, url, '?prvers=1')) for url in cl_urls]
 
     def getContent (self, url):
         """Parse article content
