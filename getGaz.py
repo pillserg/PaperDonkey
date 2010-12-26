@@ -420,6 +420,8 @@ class getKP (GetGaz):
         self.main_URL = r'http://kp.ua/'
         self.work_URL = self.main_URL
         self.filename = 'cp_kpu_'
+        self.content_substitution_pairs.append((r' \n','\n'))
+        self.content_substitution_pairs.append((r'\n+','\n'))
 
     def getContent (self,url):
         """Parse article content, overloads GetGaz.getContent
@@ -1633,14 +1635,4 @@ class getVD(GetGaz):
             return content
         return None
 
-#TEST
 
-def test():
-    import pprint
-    a = getVD()
-    a.work_URL = 'http://www.vd.net.ua/journal/269'
-    a.getNumber()
-    a.data = a.getData('http://www.vd.net.ua/rubrics-6/15525/?prvers=1')
-    print a
-    return a
-a = test()
