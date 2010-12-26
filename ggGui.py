@@ -36,6 +36,7 @@ class MyFrame(wx.Frame):
         self.OutDir = ''
         self.ext = '.txt'
         self.cfg_dict = self.LoadState()
+        self.show_log = True
 
 #-----------------------------START GAZET BUTTONS--------------------------------
 
@@ -245,8 +246,9 @@ class MyFrame(wx.Frame):
         self.rb.SetPosition((400,135))
 
 #TEST
-        self.BIG_BU = wx.TextCtrl(panel, id = -1, '%s'%('12',))
-        self.BIG_BU.SetPosition((400,140))
+        self.BIG_BU = wx.Button(panel, 10039, u'    Показать Лог >>> ')
+        self.BIG_BU.SetPosition((400,190))
+        self.Bind(wx.EVT_BUTTON, self.OnBIG_BU, self.BIG_BU)
 
 #------------------------------OUTPUT DIR CONTROL---------------
 
@@ -293,6 +295,13 @@ class MyFrame(wx.Frame):
 
 #--------------------START MENU HANDLERS-------------------------------------
     #------------EXT SWITCH HANDLER------------
+    def OnBIG_BU(self, event):
+        if self.show_log:
+            self.SetSize((550,600))
+            self.show_log = False
+        else:
+            self.SetSize((1005,600))
+            self.show_log = True
 
     def LoadState(self):
         cfg_dict = {}
