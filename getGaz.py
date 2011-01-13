@@ -11,7 +11,12 @@ VERSION = '0.9.7'
 NAME = u'Контекст PaperDonkey'
 
 def send_message(*args):
-    print *args
+    if len(args) == 1:
+        print args[0]
+    else:
+        for message in args:
+            print message
+
 
 class GetGaz (object):
     """Base class for downloading gazet articles
@@ -165,7 +170,7 @@ class GetGaz (object):
         for article_url in self.urls:
             self.data = self.getData (article_url)
             self.current_url = article_url
-            send_message('Retriving: ', article_url)
+            send_message('Retriving: %s'%article_url)
             if not self.data:
                 self.raiseError('article_download_error')
                 continue
@@ -956,15 +961,15 @@ class getFacts (GetGaz):
                          'http://www.facts.kiev.ua/archive/2010-08-18/108728/index.html',]
             send_message(u'Ищем статьи...')
             return
-        send_message( u’Ищем статьи...’)
+        send_message(u'Ищем статьи...')
         data = self.getData(self.work_URL)
 #-------------First aproximation------------------
         match = re.search(r'<div class="categoriesItem" >(.+?)<div id=.*?bottomContainer.*?>',data,re.DOTALL)
         if match:
             data = match.group(0)
-            send_message( ‘First aproximation done...’’)
+            send_message( 'First aproximation done...')
         else:
-            send_message( ‘Something wrong with data...’)
+            send_message('Something wrong with data...')
         url_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
 #------------clean urls---------------------
         cleaned_url_list = []
@@ -1024,17 +1029,17 @@ class getZN (GetGaz):
         """finds and assigns urls to self.urls """
         if self.TestRun:
             self.urls = ['http://www.zn.ua/1000/1550/70205/']
-            send_message( u’Ищем статьи...’)
+            send_message( u'Ищем статьи...')
             return
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
 #-------------First aproximation------------------
         match = re.search(r'<div class="wrap-categs">(.+?)<!-- END #wrap-categs -->',data,re.DOTALL)
         if match:
             data = match.group(0)
-            send_message( ‘First aproximation done...’’)
+            send_message( 'First aproximation done...')
         else:
-            send_message( ‘Something wrong with data...’)
+            send_message( 'Something wrong with data...')
         url_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
 #------------clean urls---------------------
         cleaned_url_list = []
@@ -1074,17 +1079,17 @@ class getKPR (GetGaz):
         """finds and assigns urls to self.urls """
         if self.TestRun:
             self.urls = ['http://www.kiev-pravda.kiev.ua/index.php?article=3933&PHPSESSID=3ff637b17e1a7ee6c71479df20dc7655']
-            send_message( u’Ищем статьи...’)
+            send_message( u'Ищем статьи...')
             return
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
 #-------------First aproximation------------------
         match = re.search(r'<!--Main content-->(.+?)<!--Right content-->',data,re.DOTALL)
         if match:
             data = match.group(0)
-            send_message( ‘First aproximation done...’’)
+            send_message( 'First aproximation done...')
         else:
-            send_message( ‘Something wrong with data...’)
+            send_message( 'Something wrong with data...')
         url_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
 #------------clean urls---------------------
         cleaned_url_list = []
@@ -1155,9 +1160,9 @@ class getTov (GetGaz):
         """finds and assigns urls to self.urls """
         if self.TestRun:
             self.urls = ['http://www.kiev-pravda.kiev.ua/index.php?article=3933&PHPSESSID=3ff637b17e1a7ee6c71479df20dc7655']
-            send_message( u’Ищем статьи...’)
+            send_message( u'Ищем статьи...')
             return
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         urls_to_look = ['',]
         urls_to_look.extend(re.findall('<a href=".+/fresh(.+?)"',data))
@@ -1189,7 +1194,7 @@ class getCN (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         urls = []
         urls.extend(re.findall('<a href=(.+?\.html) ',data))
@@ -1255,7 +1260,7 @@ class getUMOL (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         #first aproximation:
         data = re.findall('class=plashr_a>(.+?)</tr>\s+?</table>',data, re.DOTALL)[0]
@@ -1311,7 +1316,7 @@ class getCV (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         #first aproximation:
         data = re.findall(u'\u041a\u043e\u043b\u043e\u043d\u043a\u0430 2(.+?)\u043e\u043b\u043e\u043d\u043a\u0430 3',data, re.DOTALL)[0]
@@ -1504,7 +1509,7 @@ class getGOLOS (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         #first aproximation:
         data = re.findall('<span id="ctl00_Label3">(.+?)<span id="ctl00_Label22" style="color:Silver;font-size:8pt;">',data, re.DOTALL)[0]
@@ -1553,7 +1558,7 @@ class getKOM (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         urls = re.findall(r'href=".+?art=(.+?)"',data)
         cl_urls = []
@@ -1580,7 +1585,7 @@ class getKyivPost(GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         urls = re.findall(r'href="(.+?/\d+/)"',data)
         cl_urls = []
@@ -1621,7 +1626,7 @@ class getVD(GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        send_message( u’Ищем статьи...’)
+        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         urls = re.findall(r'href="/(rubrics-\d+/\d+/)"',data)
         cl_urls = []
