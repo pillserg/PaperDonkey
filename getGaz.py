@@ -7,7 +7,7 @@ import urllib2
 import os
 from pprint import pprint
 
-VERSION = '0.9.6'
+VERSION = '0.9.7'
 NAME = u'Контекст PaperDonkey'
 
 class GetGaz (object):
@@ -57,6 +57,10 @@ class GetGaz (object):
         self.PROXIE = PROXIE # Proxie
         self.current_url = ''
         self.markTables = False
+
+        #addons
+        self.titles = []
+        self.add_titles_to_file = False
 
         #substitution lists:
 
@@ -109,6 +113,9 @@ class GetGaz (object):
         """
         assert ext in ('.txt', '.doc')
         self.ext = ext
+
+    def chgWriteTitles(self, value):
+        self.add_titles_to_file = value
 
     def chgWorkURL(self, url):
         """ change working url
@@ -201,6 +208,7 @@ class GetGaz (object):
         if author and len(author)>3 and author != '\n' and author != '':
             article = ''.join((article, self.small_div, author, self.divider))
         else: article = ''.join((article, self.divider))
+        self.titles.append(title)
         return article
 
     def toFile (self):
@@ -211,6 +219,10 @@ class GetGaz (object):
         try:
             f = open (os.path.join (self.PATH,self.fullFileName),'w')
             try:
+                if self.add_titles_to_file:
+                    f.write('Zagolovki:\n')
+                    f.write('\n'.join(self.titles))
+                    f.write('\n\n')
                 for article in self.gazeta:
                     f.write (article)
             finally:

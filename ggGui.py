@@ -37,6 +37,7 @@ class MyFrame(wx.Frame):
         self.ext = '.txt'
         self.cfg_dict = self.LoadState()
         self.show_log = True
+        self.addTitlesToFile = False
 
 #-----------------------------START GAZET BUTTONS--------------------------------
 
@@ -233,6 +234,13 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_CHECKBOX, self.EvtCheckBox, self.cb_PROXIE)
         self.Bind(wx.EVT_TEXT, self.EvtText, self.text_PROXIE)
         self.text_PROXIE.Disable()
+
+
+#------------------------------Titles Control---------------------------
+        self.cb_Add_Titles = wx.CheckBox(panel, -1, u"Добавлять заголовки")
+        self.cb_Add_Titles.SetPosition((400,230))
+        self.Bind(wx.EVT_CHECKBOX, self.EvtCheckBox_Add_Titles, self.cb_Add_Titles)
+
 #------------------------------FILE FORMAT CONTROL---------------------------------
         sampleList = ['.txt', '.doc',]
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -410,6 +418,9 @@ class MyFrame(wx.Frame):
             self.text_PROXIE.Disable()
             self.PROXIE = False
 
+    def EvtCheckBox_Add_Titles(self, event):
+        self.addTitlesToFile = event.IsChecked()
+
     def CngOutDir(self,event):
         """Change working Directory"""
         dlg = wx.DirDialog(self, "Choose a directory:",
@@ -469,6 +480,7 @@ class MyFrame(wx.Frame):
         if self.OutDir:
             gazet.chgOutDir(self.OutDir)
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         gazet.process()
         return jobID
 
@@ -510,6 +522,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_RG_URL.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
         return jobID
@@ -552,6 +565,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_DAY_URL.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
         return jobID
@@ -601,6 +615,7 @@ class MyFrame(wx.Frame):
         gazet.setAllArts(self.cb_WEND.IsChecked())
         gazet.chgNumber(self.text_WEND_NUM.GetValue())
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -646,6 +661,7 @@ class MyFrame(wx.Frame):
         gazet.setAllArts(self.cb_2000.IsChecked())
         gazet.chgNumber(self.text_2000_NUM.GetValue())
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -689,6 +705,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_facts_url.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -733,6 +750,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_ZN_url.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
         return jobID
@@ -774,6 +792,7 @@ class MyFrame(wx.Frame):
         if self.OutDir:
             gazet.chgOutDir(self.OutDir)
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -819,6 +838,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         #gazet.chgWorkURL(str(self.text_ZN_url.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -864,6 +884,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         #gazet.chgWorkURL(str(self.text_ZN_url.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -908,6 +929,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_CN_URL.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -951,6 +973,7 @@ class MyFrame(wx.Frame):
         if self.OutDir:
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_UMOL_URL.GetValue()))
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -995,6 +1018,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_CV_URL.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -1039,6 +1063,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgCookie(str(self.text_GOLOS_COOKIE.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -1083,6 +1108,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_KOM_URL.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -1127,6 +1153,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_KyP_URL.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
@@ -1171,6 +1198,7 @@ class MyFrame(wx.Frame):
             gazet.chgOutDir(self.OutDir)
         gazet.chgWorkURL(str(self.text_VD_URL.GetValue()))
         gazet.chgExt(self.ext)
+        gazet.chgWriteTitles(self.addTitlesToFile)
         print 'Looking in ',gazet.work_URL
         gazet.process()
 
