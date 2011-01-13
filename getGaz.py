@@ -10,6 +10,9 @@ from pprint import pprint
 VERSION = '0.9.7'
 NAME = u'Контекст PaperDonkey'
 
+def send_message(*args):
+    print *args
+
 class GetGaz (object):
     """Base class for downloading gazet articles
        Provides cleaning methods, writing and other usefull stuff
@@ -104,7 +107,7 @@ class GetGaz (object):
     def raiseError(self, error):
         """raise non critical Error"""
         assert error in self.error_messages_dict #little sanity check
-        print self.error_messages_dict.get(error)
+        send_message(self.error_messages_dict.get(error))
 
     def chgExt(self, ext):
         """ Change extention of file to write
@@ -152,7 +155,7 @@ class GetGaz (object):
         if self.gazeta:
             self.gazeta[-1] = self.gazeta[-1][:-5] # Getting rid of last divider
             self.toFile()
-            print '%d articles processed' %len(self.gazeta)
+            send_message('%d articles processed' %len(self.gazeta))
         else:
             self.raiseError('articles_not_downloaded')
 
@@ -162,7 +165,7 @@ class GetGaz (object):
         for article_url in self.urls:
             self.data = self.getData (article_url)
             self.current_url = article_url
-            print 'Retriving: ', article_url
+            send_message('Retriving: ', article_url)
             if not self.data:
                 self.raiseError('article_download_error')
                 continue
@@ -215,7 +218,7 @@ class GetGaz (object):
         """writes processed articles into file
            to destination specified in PATH with
            name specified in fullFileName"""
-        print 'Writing to: ', os.path.join (self.PATH,self.fullFileName)
+        send_message( 'Writing to: ', os.path.join (self.PATH,self.fullFileName))
         try:
             f = open (os.path.join (self.PATH,self.fullFileName),'w')
             try:
@@ -390,7 +393,7 @@ class getUK(GetGaz):
 
     def compileUrlsList (self):
         """assign urls to self.urls of all found urls"""
-        print u'Ищем статьи...'
+        send_message( u'Ищем статьи...')
         urls_to_look = self.getUrlsToLook()
         self.urls = []
         for url in urls_to_look:
@@ -460,7 +463,7 @@ class getKP (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message(u'Ищем статьи...')
         raw_data = self.getData(self.work_URL)
         big_news_data = re.search(r'<div class="txt">(.+?)<div class="press-center">',raw_data,re.DOTALL)
         data = re.search('<h6>(.+?)<div class="blocknews">',raw_data,re.DOTALL)
@@ -474,18 +477,18 @@ class getKP (GetGaz):
             if url not in filter_urls:
                 filter_urls.append(url)
         urls = [url+'/print/' for url in filter_urls]
-        print u'Основные статьи найдены, ищем спецпроэкты:'
+        send_message(u'Основные статьи найдены, ищем спецпроэкты:')
         data = re.search('<div class="special">(.+?)<div id="c-right">',raw_data,re.DOTALL)
         if data:
             data = data.group(1)
             spec_urls = re.findall('http://kp.ua/daily/\d+/\d+',data)
-            print spec_urls
+            send_message(spec_urls)
             filter_urls = []
             for url in spec_urls:
                 if url not in filter_urls:
                     filter_urls.append(url)
             urls.extend([url+'/print/' for url in filter_urls])
-            print u'Список статей составлен приступаем к загрузке...'
+            send_message( u'Список статей составлен приступаем к загрузке...')
         self.urls = urls
 
     def getNumber (self):
@@ -514,7 +517,7 @@ class getRG (GetGaz):
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
         data = self.getData(self.work_URL)
-        print 'Looking for urls...'
+        send_message('Looking for urls...')
         self.urls = []
         urls = self.pattern_match_data_url.findall(data)
         for url in urls:
@@ -540,15 +543,15 @@ class getDAY (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message(u'Ищем статьи...')
         data = self.getData(self.work_URL).decode('windows-1251')
         #-------------First aproximation------------------
         match = re.search(ur'<!--Блок баннеров box_1 ФИНИШ -->(.+?)<!--Блок баннеров box_2 НАЧАЛО -->',data,re.DOTALL)
         if match:
             data = match.group(0)
-            print 'First aproximation done...'
+            send_message('First aproximation done...')
         else:
-            print 'Something wrong with data...'
+            send_message('Something wrong with data...')
         #-------------parse blocs------------------
         data_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
         url_list = []
@@ -680,7 +683,7 @@ class getWEND (GetGaz):
 
     def setAllArts(self,state):
         """download all articals or only printed in paper"""
-        print state
+        send_message(state)
         self.all_arts = state
 
     def rightNumber(self):
@@ -698,9 +701,9 @@ class getWEND (GetGaz):
         if self.TestRun:
             self.urls = ['http://2000.net.ua/weekend/gorod-sobytija/sos/68177',
                         'http://2000.net.ua/weekend/kievljane/68200'  ]
-            print u'Ищем статьи...'
+            send_message(u'Ищем статьи...')
             return
-        print u'Ищем статьи...'
+        send_message(u'Ищем статьи...')
         #in wend all articles are spread over static categories:
         look_up_list = ['http://2000.net.ua/weekend/gorod-sobytija/',
                         'http://2000.net.ua/weekend/gurman/',
@@ -769,7 +772,7 @@ class getWEND (GetGaz):
         if not content:
             content = self.pattern_match_content2.findall (self.data)
             if content:
-                print u"\tТабличка или картинка в этой статье"
+                send_message(u"\tТабличка или картинка в этой статье")
                 table_in = True
             if not content:
                 content = self.pattern_match_content3.findall (self.data)
@@ -806,10 +809,10 @@ class getWEND (GetGaz):
             self.current_url = article_url
             if not self.all_arts:
                 if self.rightNumber():
-                    print 'Retriving: ', article_url
+                    send_message('Retriving: ', article_url)
                     self.gazeta.append (self.compileArticle (article_url))
             if self.all_arts:
-                print 'Retriving: ', article_url
+                send_message('Retriving: ', article_url)
                 self.gazeta.append (self.compileArticle (article_url))
 
 
@@ -836,7 +839,7 @@ class get2000 (getWEND):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message(u'Ищем статьи...')
         look_up_list = ['http://2000.net.ua/2000/forum/',
                         'http://2000.net.ua/2000/derzhava/',
                         'http://2000.net.ua/2000/aspekty/',
@@ -847,7 +850,7 @@ class get2000 (getWEND):
         pat = re.compile('</li></ul>(.+?)<div id="pagenav">',re.DOTALL)
         pat_url = re.compile('<a href=(.+?)>',re.DOTALL)
         for look_up_url in look_up_list:
-            print '\t  '+ look_up_url,
+            send_message('\t  '+ look_up_url,)
             raw_urls = []
             clean_urls = []
             raw_data = self.getData(look_up_url)
@@ -863,7 +866,7 @@ class get2000 (getWEND):
                     if clean_url not in clean_urls:
                         clean_urls.append(clean_url)
             self.urls.extend(clean_urls)
-            print ''.join((' : ', str(len(clean_urls)), ' articles found'))
+            send_message(''.join((' : ', str(len(clean_urls)), ' articles found')))
 
 
 class getFacts (GetGaz):
@@ -951,17 +954,17 @@ class getFacts (GetGaz):
             self.urls = ['http://www.facts.kiev.ua/archive/2010-08-18/108743/index.html',
                          'http://www.facts.kiev.ua/archive/2010-08-18/108739/index.html',
                          'http://www.facts.kiev.ua/archive/2010-08-18/108728/index.html',]
-            print u'Ищем статьи...'
+            send_message(u'Ищем статьи...')
             return
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
 #-------------First aproximation------------------
         match = re.search(r'<div class="categoriesItem" >(.+?)<div id=.*?bottomContainer.*?>',data,re.DOTALL)
         if match:
             data = match.group(0)
-            print 'First aproximation done...'
+            send_message( ‘First aproximation done...’’)
         else:
-            print 'Something wrong with data...'
+            send_message( ‘Something wrong with data...’)
         url_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
 #------------clean urls---------------------
         cleaned_url_list = []
@@ -1021,17 +1024,17 @@ class getZN (GetGaz):
         """finds and assigns urls to self.urls """
         if self.TestRun:
             self.urls = ['http://www.zn.ua/1000/1550/70205/']
-            print u'Ищем статьи...'
+            send_message( u’Ищем статьи...’)
             return
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
 #-------------First aproximation------------------
         match = re.search(r'<div class="wrap-categs">(.+?)<!-- END #wrap-categs -->',data,re.DOTALL)
         if match:
             data = match.group(0)
-            print 'First aproximation done...'
+            send_message( ‘First aproximation done...’’)
         else:
-            print 'Something wrong with data...'
+            send_message( ‘Something wrong with data...’)
         url_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
 #------------clean urls---------------------
         cleaned_url_list = []
@@ -1071,17 +1074,17 @@ class getKPR (GetGaz):
         """finds and assigns urls to self.urls """
         if self.TestRun:
             self.urls = ['http://www.kiev-pravda.kiev.ua/index.php?article=3933&PHPSESSID=3ff637b17e1a7ee6c71479df20dc7655']
-            print u'Ищем статьи...'
+            send_message( u’Ищем статьи...’)
             return
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
 #-------------First aproximation------------------
         match = re.search(r'<!--Main content-->(.+?)<!--Right content-->',data,re.DOTALL)
         if match:
             data = match.group(0)
-            print 'First aproximation done...'
+            send_message( ‘First aproximation done...’’)
         else:
-            print 'Something wrong with data...'
+            send_message( ‘Something wrong with data...’)
         url_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
 #------------clean urls---------------------
         cleaned_url_list = []
@@ -1152,16 +1155,16 @@ class getTov (GetGaz):
         """finds and assigns urls to self.urls """
         if self.TestRun:
             self.urls = ['http://www.kiev-pravda.kiev.ua/index.php?article=3933&PHPSESSID=3ff637b17e1a7ee6c71479df20dc7655']
-            print u'Ищем статьи...'
+            send_message( u’Ищем статьи...’)
             return
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
         urls_to_look = ['',]
         urls_to_look.extend(re.findall('<a href=".+/fresh(.+?)"',data))
         urls_to_look = [url for url in urls_to_look if not re.search('\.html',url)]
         urls = []
         for url_to_look in urls_to_look:
-            print self.main_URL + url_to_look
+            send_message(self.main_URL + url_to_look)
             urls.extend(re.findall('<a href="(.+?\.html)"',self.getData(self.main_URL + url_to_look)))
         urls = [url for url in urls if not re.search('/',url)]
         self.urls = ['http://www.tovarish.com.ua/print/'+url for url in urls]
@@ -1186,7 +1189,7 @@ class getCN (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
         urls = []
         urls.extend(re.findall('<a href=(.+?\.html) ',data))
@@ -1252,7 +1255,7 @@ class getUMOL (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
         #first aproximation:
         data = re.findall('class=plashr_a>(.+?)</tr>\s+?</table>',data, re.DOTALL)[0]
@@ -1308,7 +1311,7 @@ class getCV (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
         #first aproximation:
         data = re.findall(u'\u041a\u043e\u043b\u043e\u043d\u043a\u0430 2(.+?)\u043e\u043b\u043e\u043d\u043a\u0430 3',data, re.DOTALL)[0]
@@ -1368,7 +1371,7 @@ class getCV (GetGaz):
            to destination specified in PATH with
            name specified in fullFileName"""
            #Need to be rewriten with os.path
-        print 'Writing to: ', os.path.join (self.PATH,self.fullFileName)
+        send_message('Writing to: ', os.path.join (self.PATH,self.fullFileName))
         try:
             f = open (os.path.join (self.PATH,self.fullFileName),'w')
             try:
@@ -1381,7 +1384,7 @@ class getCV (GetGaz):
 
     def getZarubezh(self):
         #first approximation
-        print u'Retriving: ЗАРУБЕЖ'
+        send_message(u'Retriving: ЗАРУБЕЖ')
         data = self.getData(self.work_URL)
         data = re.findall(u'\u043e\u043b\u043e\u043d\u043a\u0430 1(.+?)\u043e\u043b\u043e\u043d\u043a\u0430 2',data, re.DOTALL)[0]
         small_arts_list = re.findall(r'<a href=.+?</p></span>',data,re.DOTALL)
@@ -1409,7 +1412,7 @@ class getCV (GetGaz):
 
     def getInformags(self):
         #first approximation
-        print u'Retriving: ИНФОРМАГЕНСТВА'
+        send_message(u'Retriving: ИНФОРМАГЕНСТВА')
         data = self.getData(self.work_URL)
         data = re.findall(u'\u043e\u043b\u043e\u043d\u043a\u0430 3(.+?)<hr width=80% noshade />',data, re.DOTALL)[0]
         small_arts_list = re.findall(r'<a href=.+?</p></span>',data,re.DOTALL)
@@ -1450,7 +1453,7 @@ class getCV (GetGaz):
         if self.gazeta:
             self.gazeta[-1] = self.gazeta[-1][:-5] # Getting rid of last divider
             self.toFile()
-            print '%d articles processed' %len(self.gazeta)
+            send_message('%d articles processed' %len(self.gazeta))
         else:
             self.raiseError('articles_not_downloaded')
 
@@ -1501,7 +1504,7 @@ class getGOLOS (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
         #first aproximation:
         data = re.findall('<span id="ctl00_Label3">(.+?)<span id="ctl00_Label22" style="color:Silver;font-size:8pt;">',data, re.DOTALL)[0]
@@ -1509,18 +1512,18 @@ class getGOLOS (GetGaz):
         urls = re.findall('href="(.+?)"',data)
         urls_to_look = [re.sub('amp;', '', '/'.join((self.main_URL,url))) for url in urls if 'Rubrics.aspx' in url and 'javascript' not in url]
         clean_urls_to_look = []
-        print '1st stage done'
+        send_message('1st stage done')
 
         for url in urls_to_look:
             if url not in clean_urls_to_look:
                 clean_urls_to_look.append(url)
         clean_urls = [url for url in urls if 'Article.aspx' in url and 'javascript' not in url]
-        print 'main articles mathed'
+        send_message('main articles mathed')
         for url in clean_urls_to_look:
             apr1 = re.findall('class="ArticleRubric"(.+?)<span id="ctl00_FormView1_CurrentNumLabel">',self.getData(url), re.DOTALL)[0]
             sub_urls = re.findall('href="(.+?)"',apr1)
             clean_urls.extend(sub_urls)
-            print url, ' : ', len(sub_urls)
+            send_message(url, ' : ', len(sub_urls))
             del sub_urls
         urls = clean_urls[:]
         clean_urls = []
@@ -1528,7 +1531,7 @@ class getGOLOS (GetGaz):
             if url not in clean_urls:
                 clean_urls.append(url)
         self.urls = ['/'.join((self.work_URL, re.sub('Article','Print',url))) for url in clean_urls]
-        print 'all preps done'
+        send_message('all preps done')
 
 
 class getKOM (GetGaz):
@@ -1550,7 +1553,7 @@ class getKOM (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
         urls = re.findall(r'href=".+?art=(.+?)"',data)
         cl_urls = []
@@ -1577,7 +1580,7 @@ class getKyivPost(GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
         urls = re.findall(r'href="(.+?/\d+/)"',data)
         cl_urls = []
@@ -1618,7 +1621,7 @@ class getVD(GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        print u'Ищем статьи...'
+        send_message( u’Ищем статьи...’)
         data = self.getData(self.work_URL)
         urls = re.findall(r'href="/(rubrics-\d+/\d+/)"',data)
         cl_urls = []
