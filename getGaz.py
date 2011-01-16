@@ -7,7 +7,7 @@ import urllib2
 import os
 from pprint import pprint
 
-VERSION = '0.9.7'
+VERSION = '0.9.8'
 NAME = u'Контекст PaperDonkey'
 
 def send_message(*args):
