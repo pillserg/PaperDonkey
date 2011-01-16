@@ -1014,8 +1014,7 @@ class getZN (GetGaz):
         self.content_substitution_pairs.remove((r'&nbsp;', r''))
         self.content_substitution_pairs.insert(1, (r'&nbsp;', r' '))
         self.content_substitution_pairs.insert(1, (r'"", :src => "img/pic.jpg"}/ -->', r''))
-        self.content_substitution_pairs.append((r'&#132;|&#147;', r'"')
-
+        self.content_substitution_pairs.append((r'&#132;|&#147;', r'"'))
 
     def getAuthor (self):
         """Parse Author of Article
