@@ -74,15 +74,18 @@ class GetGaz (object):
 
         self.title_substitution_pairs = [
             (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;', r'"'),
-            (r'<.+?>|&nbsp;', r''),
+            (r'<.+?>', r''),
+            (r'&nbsp;', r''),
             (r'&rsquo;|&#39;', r"'"),
             (r'&amp;', r'&'),
             (r' *\r+| *\n+', r' '),
             (r' +', r' '),
+            (r'&mdash', r'-'),
             ]
         self.author_substitution_pairs = [
             (r'&quot;', r'"'),
-            (r'<.+?>|&nbsp;| *\r+| *\n+', r''),
+            (r'<.+?>| *\r+| *\n+', r''),
+            (r'&nbsp;', r''),
             (r' +', r' '),
             ]
         self.content_substitution_pairs = [
@@ -96,7 +99,8 @@ class GetGaz (object):
             (r'&quot;|&ldquo;|&rdquo;|&raquo;|&laquo;','"'),
             (r'&mdash;|&ndash;|&middot;','-'),
             (r'&hellip;','...'),
-            (r'<.+?>|&nbsp;|&diams;|&shy;',''),
+            (r'<.+?>|&diams;|&shy;',''),
+            (r'&nbsp;', r''),
             (r'\t',''),
             (r'\r','\n'),
             (r'\n+','\n'),
@@ -1001,6 +1005,18 @@ class getZN (GetGaz):
         self.work_URL = self.main_URL
         self.filename = 'cp_zn_'
 
+        self.title_substitution_pairs.remove((r'&nbsp;', r''))
+        self.title_substitution_pairs.insert(1,(r'&nbsp;', r' '))
+
+        self.author_substitution_pairs.remove((r'&nbsp;', r''))
+        self.author_substitution_pairs.insert(1,(r'&nbsp;', r' '))
+
+        self.content_substitution_pairs.remove((r'&nbsp;', r''))
+        self.content_substitution_pairs.insert(1, (r'&nbsp;', r' '))
+        self.content_substitution_pairs.insert(1, (r'"", :src => "img/pic.jpg"}/ -->', r''))
+        self.content_substitution_pairs.append((r'&#132;|&#147;', r'"')
+
+
     def getAuthor (self):
         """Parse Author of Article
         returns string containing author's name(in most cases :)) or None"""
@@ -1652,3 +1668,11 @@ class getVD(GetGaz):
                 content = '\n\n Images Links \n\n'.join((content, img_urls_string))
             return content
         return None
+
+def test():
+    a = getZN()
+    a.data = a.getData('http://www.zn.ua/newspaper/articles/73269')
+    return a.getContent('')
+
+if __name__ == '__main__':
+    a = test()
