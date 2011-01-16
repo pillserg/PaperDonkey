@@ -107,7 +107,7 @@ class MyFrame(wx.Frame):
         self.button_GetZN.SetPosition((15, 195))
         self.Bind(wx.EVT_BUTTON, self.OnGetZN, self.button_GetZN)
         self.text_ZN_url =  wx.TextCtrl(panel, -1,
-                                          'http://www.zn.ua/',
+                                          'http://www.zn.ua/newspaper',
                                           size=(200, -1))
         self.text_ZN_url.SetPosition((110,196))
 #-----------------------------END ZN BUTTTONS--------------------------------
