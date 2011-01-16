@@ -993,11 +993,11 @@ class getZN (GetGaz):
         GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
         #patterns
         self.pattern_match_title = re.compile (r'<h1>(.+?)</h1>',re.DOTALL)# Заголовок
-        self.pattern_match_author = re.compile (r'<div class="by">(.*?)</div>',re.DOTALL) # Автор
-        self.pattern_match_content = re.compile (r'<div id="text">(.+?)<ul class="meta-actions"  id="bottomsubmenu">',re.DOTALL) # Текст статьи
-        self.pattern_match_number = re.compile(r' \xb9 (\d+)',re.DOTALL)
+        self.pattern_match_author = re.compile (r'<p class="post-meta">(.+?)<span class="post-date">',re.DOTALL) # Автор
+        self.pattern_match_content = re.compile (r'<div class="grid6 grid-last text-main">(.+)<div class="tags">', re.DOTALL) # Текст статьи
+        self.pattern_match_number = re.compile(r'<div class="nomer-meta">.+?<h3>.+?(\d+)',re.DOTALL)
         #atribs
-        self.main_URL = r'http://www.zn.ua'
+        self.main_URL = r'http://www.zn.ua/newspaper'
         self.work_URL = self.main_URL
         self.filename = 'cp_zn_'
 
@@ -1034,7 +1034,7 @@ class getZN (GetGaz):
         send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
 #-------------First aproximation------------------
-        match = re.search(r'<div class="wrap-categs">(.+?)<!-- END #wrap-categs -->',data,re.DOTALL)
+        match = re.search(r'<a name="contents">(.+?)<!-- BEGIN .footer -->',data,re.DOTALL)
         if match:
             data = match.group(0)
             send_message( 'First aproximation done...')
@@ -1042,10 +1042,8 @@ class getZN (GetGaz):
             send_message( 'Something wrong with data...')
         url_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
 #------------clean urls---------------------
-        cleaned_url_list = []
-        cleaned_url_list = [self.main_URL + url for url in url_list]
-        cleaned_url_list = [re.sub('"','',url) for url in cleaned_url_list]
-        cleaned_url_list = [''.join((url,'?printpreview')) for url in cleaned_url_list]
+        cleaned_url_list = [re.sub('"','',url) for url in url_list]
+        #cleaned_url_list = [''.join((url,'?printpreview')) for url in cleaned_url_list]
         for url in cleaned_url_list:
             if url not in self.urls:
                 self.urls.append(url)
@@ -1654,5 +1652,3 @@ class getVD(GetGaz):
                 content = '\n\n Images Links \n\n'.join((content, img_urls_string))
             return content
         return None
-
-
