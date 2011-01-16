@@ -307,9 +307,11 @@ class MyFrame(wx.Frame):
         if self.show_log:
             self.SetSize((550,600))
             self.show_log = False
+            self.BIG_BU.Label = u'    Показать Лог >>> '
         else:
             self.SetSize((1005,600))
             self.show_log = True
+            self.BIG_BU.Label = u'    Спрятать Лог <<< '
 
     def LoadState(self):
         cfg_dict = {}
