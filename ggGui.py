@@ -6,6 +6,7 @@ import wx.lib.delayedresult as delayedresult
 import sys
 import time
 import re
+import pickle
 
 VERSION = ' '.join((getGaz.VERSION, getGaz.NAME))
 #-----------------------------START REDIR STDIN/STDERR---------------------------
@@ -314,31 +315,14 @@ class MyFrame(wx.Frame):
             self.BIG_BU.Label = u'    Спрятать Лог <<< '
 
     def LoadState(self):
-        cfg_dict = {}
         try:
             file = open('config.cfg','r')
-            data = file.read().decode('utf-8')
+            cfg_dict = pickle.load(file)
             file.close()
         except IOError:
             print 'ERROR'
-            return
-        try:
-            cfg_dict['RG_URL'] = re.findall('RG_URL = (.+)',data)[0]
-            cfg_dict['DAY_URL'] = re.findall('DAY_URL = (.+)',data)[0]
-            cfg_dict['UMOL_URL'] = re.findall('UMOL_URL = (.+)',data)[0]
-            cfg_dict['CV_URL'] = re.findall('CV_URL = (.+)',data)[0]
-            cfg_dict['CN_URL'] = re.findall('CN_URL = (.+)',data)[0]
-            cfg_dict['WEND_NUM'] = re.findall('WEND_NUM = (.+)',data)[0]
-            cfg_dict['2000_NUM'] = re.findall('2000_NUM = (.+)',data)[0]
-            cfg_dict['PROXIE_ADDR'] = re.findall('PROXIE_ADDR = (.+)',data)[0]
-            cfg_dict['USEPROXIE'] = re.findall('USEPROXIE = (.+)',data)[0]
-            cfg_dict['SAVE_PATH'] = re.findall('SAVE_PATH = (.+)',data)[0]
-            cfg_dict['LAST_USE'] = re.findall('LAST_USE = (.+)',data)[0]
-        except:
-            print 'ERROR with config file, loading DEFAULTS'
             return None
         return cfg_dict
-        pass
 
     def SaveState(self):
         """Save some values to config fle"""
@@ -359,12 +343,9 @@ class MyFrame(wx.Frame):
                        'SAVE_PATH':self.text_OUT_DIR.GetValue(),
                        'LAST_USE':self.localDate()}
         file = open('config.cfg','w')
-        for key, value in cfg_dict.items():
-            entry = '%s = %s\n'%(key, value)
-            entry = entry.encode('utf-8')
-            file.write(entry)
+        pickle.dump(cfg_dict, file)
         file.close()
-        pass
+
 
     def EvtRadioBox(self, event):
         if event.GetInt() == 1:
