@@ -239,7 +239,7 @@ class MyFrame(wx.Frame):
 
 #------------------------------Titles Control---------------------------
         self.cb_Add_Titles = wx.CheckBox(panel, -1, u"Добавлять заголовки")
-        self.cb_Add_Titles.SetPosition((400,230))
+        self.cb_Add_Titles.SetPosition((400, 230))
         self.Bind(wx.EVT_CHECKBOX, self.EvtCheckBox_Add_Titles, self.cb_Add_Titles)
 
 #------------------------------FILE FORMAT CONTROL---------------------------------
@@ -252,11 +252,11 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_RADIOBOX, self.EvtRadioBox, self.rb)
 
         sizer.Add(self.rb, 0, wx.ALL, 20)
-        self.rb.SetPosition((400,135))
+        self.rb.SetPosition((400, 135))
 
 #TEST
-        self.BIG_BU = wx.Button(panel, 10039, u'    Показать Лог >>> ')
-        self.BIG_BU.SetPosition((400,190))
+        self.BIG_BU = wx.Button(panel, 10039, u'    Спрятать Лог <<<')
+        self.BIG_BU.SetPosition((400, 190))
         self.Bind(wx.EVT_BUTTON, self.OnBIG_BU, self.BIG_BU)
 
 #------------------------------OUTPUT DIR CONTROL---------------
@@ -306,11 +306,11 @@ class MyFrame(wx.Frame):
     #------------EXT SWITCH HANDLER------------
     def OnBIG_BU(self, event):
         if self.show_log:
-            self.SetSize((550,600))
+            self.SetSize((550, 600))
             self.show_log = False
             self.BIG_BU.Label = u'    Показать Лог >>> '
         else:
-            self.SetSize((1005,600))
+            self.SetSize((1005, 600))
             self.show_log = True
             self.BIG_BU.Label = u'    Спрятать Лог <<< '
 

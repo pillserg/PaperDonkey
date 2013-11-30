@@ -4,11 +4,15 @@ import urllib
 import time
 import sys
 import urllib2
+from socket import timeout as ConnectionTimeoutError
 import os
 from pprint import pprint
 
-VERSION = '0.9.8'
+VERSION = '0.9.9'
 NAME = u'Контекст PaperDonkey'
+RECONNECT_ATTEMPTS = 10
+CONNECTION_TIMEOUT = 30
+USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36'
 
 def send_message(*args):
     if len(args) == 1:
@@ -168,32 +172,35 @@ class GetGaz (object):
         else:
             self.raiseError('articles_not_downloaded')
 
-    def getPaper (self):
+    def getPaper(self):
         """Download and process urls from urls list """
-        assert self.urls # There are realy some urls to process
         for article_url in self.urls:
-            self.data = self.getData (article_url)
+            self.data = self.getData(article_url)
             self.current_url = article_url
-            send_message('Retriving: %s'%article_url)
+            send_message('Retriving: %s' % article_url)
             if not self.data:
                 self.raiseError('article_download_error')
                 continue
-            self.gazeta.append (self.compileArticle (article_url))
+            self.gazeta.append(self.compileArticle(article_url))
 
-    def getData (self, url):
+    def getData(self, url, loop=0):
         """ Download data from url returns string of rawHTML"""
-        assert 'http' in url # little sanity check
         request = urllib2.Request(url)
-        request.add_header('User-Agent','PaperDonkey/0.4.9')
+        request.add_header('User-Agent', USER_AGENT)
         if self.PROXIE:
-            request.set_proxy(self.PROXIE,"http")
+            request.set_proxy(self.PROXIE, "http")
         opener = urllib2.build_opener()
         try:
-            usock = opener.open(request)
-        except:
-            self.raiseError('connection_error')
-            return None
-        data = usock.read ()
+            usock = opener.open(request, timeout=CONNECTION_TIMEOUT)
+        except Exception:
+            if loop >= RECONNECT_ATTEMPTS:
+                self.raiseError('connection_error')
+                return None
+
+            print 'Connection timeout, trying to reconnect'
+            return self.getData(url, loop=loop + 1)
+
+        data = usock.read()
         usock.close
         return data
 
@@ -204,7 +211,7 @@ class GetGaz (object):
         and author with divider at ste end"""
         title = self.getTitle ()
         author = self.getAuthor ()
-        content = self.getContent (url)
+        content = self.getContent(url)
         article = ''
         if author:
             if content:
@@ -271,13 +278,18 @@ class GetGaz (object):
         """Parse article content
            returns string containing article content stripped of garbage(at least trys)
            or None"""
-        content = self.pattern_match_content.findall (self.data)
-        if content:
-            content = content[0]
-            for s1, s2 in self.content_substitution_pairs:
-                content = re.sub (s1, s2, content)
-            content = content.strip()
-            return content
+        if not isinstance(self.pattern_match_content, list):
+            patterns = [self.pattern_match_content,]
+        else:
+             patterns = self.pattern_match_content
+        for pattern in patterns:
+            content = pattern.findall (self.data)
+            if content:
+                content = content[0]
+                for s1, s2 in self.content_substitution_pairs:
+                    content = re.sub (s1, s2, content)
+                content = content.strip()
+                return content
         return None
 
     def checkDate (self):
@@ -507,14 +519,18 @@ class getKP (GetGaz):
 
 class getRG (GetGaz):
     """get gazet RABGAZ"""
-    def __init__ (self,DATE = False,TEST = False, PROXIE = False):
+    def __init__(self, DATE=False, TEST=False, PROXIE=False):
         """Initialize getRG object with basic patterns and other stuff
             DATE may be specified in ('yyyy','mm','dd')format"""
-        GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
+        GetGaz.__init__(self, DATE=False, TEST=False, PROXIE=False)
         #patterns
-        self.pattern_match_title = re.compile (r'<a href=.+?class="anons_big"><font class="header_b">(.+?)</font></a>',re.DOTALL)# Заголовок
-        self.pattern_match_author = re.compile (r'Автор: (.+?)\.',re.DOTALL) # Автор
-        self.pattern_match_content = re.compile (r'<div><p>\s*(.+)</p>',re.DOTALL) # Текст статьи
+        self.pattern_match_title = re.compile(r'<a href=.+?class="anons_big"><font class="header_b">(.+?)</font></a>', re.DOTALL)# Заголовок
+        self.pattern_match_author = re.compile(r'Автор: (.+?)\.', re.DOTALL) # Автор
+        self.pattern_match_content = [
+            re.compile(r'<div><p>\s*(.+)</p>', re.DOTALL),
+            re.compile(r'<p><font size="3">\s*(.+)</p>', re.DOTALL),
+            re.compile(r'<div><blockquote><font size="3">\s*(.+)</p>', re.DOTALL)
+        ]
         self.pattern_match_number = re.compile(r'Выпуск <b>№ (\d+)',re.DOTALL) # Номер Газеты
         self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
         self.pattern_match_data_url = re.compile(r'<td class="grey_bott".+?<a href="/(.+?)">',re.DOTALL)
@@ -1361,7 +1377,7 @@ class getCV (GetGaz):
         """ Download data from url returns string of rawHTML"""
         assert 'http' in url # little sanity check
         request = urllib2.Request(url)
-        request.add_header('User-Agent','PaperDonkey/0.4.9')
+        request.add_header('User-Agent', USER_AGENT)
         if self.PROXIE:
             request.set_proxy(self.PROXIE,"http")
         opener = urllib2.build_opener()
@@ -1502,7 +1518,7 @@ class getGOLOS (GetGaz):
         assert 'http' in url # little sanity check
         cookie = self.cookie
         debug_list = []
-        headers = {'User-Agent':'Mozilla/5.0 (Windows; U; Windows NT 6.1; ru; rv:1.9.1.9) Gecko/20100315 Firefox/3.5.9 WebMoney Advisor',
+        headers = {'User-Agent': USER_AGENT,
                    'Host' : 'golos.com.ua',
                    'Referer' : 'http://www.golos.com.ua',
                    'Connection' : 'close',
