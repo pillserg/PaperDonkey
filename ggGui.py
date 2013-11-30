@@ -45,6 +45,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START UK BUTTTONS----------------------------------
         self.button_GetUK = wx.Button(panel, 1003, u'Затянуть УК   ')
         self.button_GetUK.SetPosition((15, 15))
+        self.button_GetUK.Enable(False)
         self.text_UK_Date =  wx.TextCtrl(panel, -1, self.localDate(), size=(200, -1))
         self.text_UK_Date.SetPosition((110,16))
         self.Bind(wx.EVT_BUTTON, self.OnGetUK, self.button_GetUK)
@@ -63,6 +64,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START DAY BUTTTONS---------------------------------
         self.button_GetDAY = wx.Button(panel, 1006, u'Затянуть DAY ')
         self.button_GetDAY.SetPosition((15, 75))
+        self.button_GetDAY.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetDAY, self.button_GetDAY)
         self.text_DAY_URL =  wx.TextCtrl(panel, -1, 'http://www.day.kiev.ua/ua.2010.142', size=(200, -1))
         self.text_DAY_URL.SetPosition((110,76))
@@ -71,6 +73,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START WEEKEND BUTTTONS-----------------------------
         self.button_GetWEND = wx.Button(panel, 1007, u'Затянуть WD  ')
         self.button_GetWEND.SetPosition((15, 105))
+        self.button_GetWEND.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetWEND, self.button_GetWEND)
         self.StaticText_WEND_N = wx.StaticText(panel, -1, u"№", (113, 110))
         self.text_WEND_NUM =  wx.TextCtrl(panel, -1, '32', size=(30, -1))
@@ -83,6 +86,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START 2000 BUTTTONS-----------------------------
         self.button_Get2000 = wx.Button(panel, 1008, u'Затянуть 2000')
         self.button_Get2000.SetPosition((15, 135))
+        self.button_Get2000.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGet2000, self.button_Get2000)
         self.StaticText_2000_N = wx.StaticText(panel, -1, u"№", (113, 140))
         self.text_2000_NUM =  wx.TextCtrl(panel, -1, '32', size=(30, -1))
@@ -107,15 +111,14 @@ class MyFrame(wx.Frame):
         self.button_GetZN = wx.Button(panel, 1010, u'Затянуть ZN    ')
         self.button_GetZN.SetPosition((15, 195))
         self.Bind(wx.EVT_BUTTON, self.OnGetZN, self.button_GetZN)
-        self.text_ZN_url =  wx.TextCtrl(panel, -1,
-                                          'http://www.zn.ua/newspaper',
-                                          size=(200, -1))
+        self.text_ZN_url =  wx.TextCtrl(panel, -1, 'http://gazeta.zn.ua/', size=(200, -1))
         self.text_ZN_url.SetPosition((110,196))
 #-----------------------------END ZN BUTTTONS--------------------------------
 
 #-----------------------------START KPR BUTTTONS-----------------------------
         self.button_GetKPR = wx.Button(panel, 1011, u'Затянуть KPR  ')
         self.button_GetKPR.SetPosition((15, 225))
+        self.button_GetKPR.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetKPR, self.button_GetKPR)
         self.text_KPR_url =  wx.TextCtrl(panel, -1,
                                           'http://www.kiev-pravda.kiev.ua',
@@ -146,6 +149,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START CN BUTTTONS-----------------------------
         self.button_GetCN = wx.Button(panel, 1014, u'Затянуть CN   ')
         self.button_GetCN.SetPosition((15, 315))
+        self.button_GetCN.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetCN, self.button_GetCN)
         self.text_CN_URL =  wx.TextCtrl(panel, -1,
                                           'http://www.cn.com.ua',
@@ -166,6 +170,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START CV BUTTTONS----------------------------------
         self.button_GetCV = wx.Button(panel, 10016, u'Затянуть CV   ')
         self.button_GetCV.SetPosition((15, 375))
+        self.button_GetCV.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetCV, self.button_GetCV)
         self.text_CV_URL =  wx.TextCtrl(panel, -1, 'http://www.silskivisti.kiev.ua/18528/index.php', size=(250, -1))
         self.text_CV_URL.SetPosition((110,376))
@@ -174,6 +179,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START KOM BUTTTONS----------------------------------
         self.button_GetKOM = wx.Button(panel, 10017, u'Затянуть KOM')
         self.button_GetKOM.SetPosition((15, 405))
+        self.button_GetKOM.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetKOM, self.button_GetKOM)
         self.text_KOM_URL =  wx.TextCtrl(panel, -1, 'http://comments.com.ua', size=(250, -1))
         self.text_KOM_URL.SetPosition((110,406))
@@ -182,6 +188,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START GOLOS BUTTTONS----------------------------------
         self.button_GetGOLOS = wx.Button(panel, 10018, u'Затянуть GOL ')
         self.button_GetGOLOS.SetPosition((15, 435))
+        self.button_GetGOLOS.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetGOLOS, self.button_GetGOLOS)
         self.text_GOLOS_COOKIE =  wx.TextCtrl(panel, -1, 'PASTE COOKIE HERE...', size=(250, -1),)
         self.text_GOLOS_COOKIE.SetPosition((110,436))
@@ -190,6 +197,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START KyivPostBUTTTONS----------------------------------
         self.button_GetKyP = wx.Button(panel, 10019, u'Затянуть KyP ')
         self.button_GetKyP.SetPosition((15, 465))
+        self.button_GetKyP.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetKyP, self.button_GetKyP)
         self.text_KyP_URL =  wx.TextCtrl(panel, -1, 'http://www.kyivpost.com/newspaper/', size=(250, -1))
         self.text_KyP_URL.SetPosition((110,465))
@@ -198,6 +206,7 @@ class MyFrame(wx.Frame):
 #-----------------------------START VD BUTTTONS----------------------------------
         self.button_GetVD = wx.Button(panel, 10020, u'Затянуть VD   ')
         self.button_GetVD.SetPosition((15, 495))
+        self.button_GetVD.Enable(False)
         self.Bind(wx.EVT_BUTTON, self.OnGetVD, self.button_GetVD)
         self.text_VD_URL =  wx.TextCtrl(panel, -1, 'http://www.vd.net.ua/journal/269', size=(250, -1))
         self.text_VD_URL.SetPosition((110,495))
@@ -1011,12 +1020,12 @@ class MyFrame(wx.Frame):
     def _resultConsumerCV(self, delayedResult):
         jobID = delayedResult.getJobID()
         assert jobID == self.jobID
-        try:
-            result = delayedResult.get()
-        except:
-            print u"Попытка стянуть CV закончилась провалом"
-            self.button_GetCV.Enable(True)
-            return
+        
+        result = delayedResult.get()
+    
+        print u"Попытка стянуть CV закончилась провалом"
+        self.button_GetCV.Enable(True)
+        return
 
         # get ready for next job:
         self.button_GetCV.Enable(True)

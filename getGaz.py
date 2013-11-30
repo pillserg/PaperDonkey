@@ -85,13 +85,13 @@ class GetGaz (object):
             (r' *\r+| *\n+', r' '),
             (r' +', r' '),
             (r'&mdash', r'-'),
-            ]
+        ]
         self.author_substitution_pairs = [
             (r'&quot;', r'"'),
             (r'<.+?>| *\r+| *\n+', r''),
             (r'&nbsp;', r''),
             (r' +', r' '),
-            ]
+        ]
         self.content_substitution_pairs = [
             (r'\s</p>','\n'),
             (r' +',' '),
@@ -105,10 +105,11 @@ class GetGaz (object):
             (r'&hellip;','...'),
             (r'<.+?>|&diams;|&shy;',''),
             (r'&nbsp;', r''),
-            (r'\t',''),
-            (r'\r','\n'),
-            (r'\n+','\n'),
-            ]
+            (r'\t', ''),
+            (r'\r', '\n'),
+            (r'\n+', '\n'),
+            (r'\n\s+','\n'),
+        ]
 
         #ERROR MeSSAGES#
         self.error_messages_dict= {'articles_not_found':u'ОШИБКА: !!! No articles found look into Help for known problems !!! (Статьи не найдены)',
@@ -190,15 +191,9 @@ class GetGaz (object):
         if self.PROXIE:
             request.set_proxy(self.PROXIE, "http")
         opener = urllib2.build_opener()
-        try:
-            usock = opener.open(request, timeout=CONNECTION_TIMEOUT)
-        except Exception:
-            if loop >= RECONNECT_ATTEMPTS:
-                self.raiseError('connection_error')
-                return None
-
-            print 'Connection timeout, trying to reconnect'
-            return self.getData(url, loop=loop + 1)
+        
+        usock = opener.open(request, timeout=CONNECTION_TIMEOUT)
+        
 
         data = usock.read()
         usock.close
@@ -252,14 +247,20 @@ class GetGaz (object):
     def getTitle (self):
         """Parses article Title
            returns string containing article's Title or None"""
-        title = self.pattern_match_title.findall (self.data)
-        if title:
-            title = title[0]
-            title = title.strip()
-            for s1, s2 in self.title_substitution_pairs:
-                title = re.sub(s1, s2, title)
-            title = title.strip()
-            return title
+        if not isinstance(self.pattern_match_title, list):
+            patterns = [self.pattern_match_title, ]
+        else:
+            patterns = self.pattern_match_title
+
+        for pattern in patterns:
+            title = pattern.findall(self.data)
+            if title:
+                title = title[0]
+                title = title.strip()
+                for s1, s2 in self.title_substitution_pairs:
+                    title = re.sub(s1, s2, title)
+                title = title.strip()
+                return title
         return None
 
     def getAuthor (self):
@@ -1012,12 +1013,15 @@ class getZN (GetGaz):
             DATE may be specified in ('yyyy','mm','dd')format"""
         GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
         #patterns
-        self.pattern_match_title = re.compile (r'<h1>(.+?)</h1>',re.DOTALL)# Заголовок
-        self.pattern_match_author = re.compile (r'<p class="post-meta">(.+?)<span class="post-date">',re.DOTALL) # Автор
-        self.pattern_match_content = re.compile (r'<div class="grid6 grid-last text-main">(.+)<div class="tags">', re.DOTALL) # Текст статьи
-        self.pattern_match_number = re.compile(r'<div class="nomer-meta">.+?<h3>.+?(\d+)',re.DOTALL)
+        self.pattern_match_title = [
+            re.compile(r"<h1 class='title'>(.+?)</h1>", re.DOTALL),
+            re.compile(r'<h1 class="title ">(.+?)</h1>', re.DOTALL),
+        ]
+        self.pattern_match_author = re.compile (r"class='author_'>(.+?)</a>", re.DOTALL)
+        self.pattern_match_content = re.compile (r'<p class="p1">(.+)<div class=\'article_bottom\'>', re.DOTALL) # Текст статьи
+        self.pattern_match_number = re.compile(r'<div class="nomer-meta">.+?<h3>.+?(\d+)', re.DOTALL)
         #atribs
-        self.main_URL = r'http://www.zn.ua/newspaper'
+        self.main_URL = r'http://gazeta.zn.ua/'
         self.work_URL = self.main_URL
         self.filename = 'cp_zn_'
 
@@ -1058,26 +1062,21 @@ class getZN (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        if self.TestRun:
-            self.urls = ['http://www.zn.ua/1000/1550/70205/']
-            send_message( u'Ищем статьи...')
-            return
-        send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
 #-------------First aproximation------------------
-        match = re.search(r'<a name="contents">(.+?)<!-- BEGIN .footer -->',data,re.DOTALL)
+        match = re.search(r"<span class='main_title'(.+?)<!--#block_bottom_top",data,re.DOTALL)
         if match:
             data = match.group(0)
             send_message( 'First aproximation done...')
         else:
             send_message( 'Something wrong with data...')
-        url_list = re.findall(r'<a href=(.+?)>',data,re.DOTALL)
+        url_list = re.findall(r'<a href=(.+?)>', data, re.DOTALL)
 #------------clean urls---------------------
         cleaned_url_list = [re.sub('"','',url) for url in url_list]
         #cleaned_url_list = [''.join((url,'?printpreview')) for url in cleaned_url_list]
         for url in cleaned_url_list:
             if url not in self.urls:
-                self.urls.append(url)
+                self.urls.append(url.strip("'").strip('"'))
 
     def getNumber (self):
         """Gets number of this Gazet"""
@@ -1139,7 +1138,6 @@ class getKPR (GetGaz):
 
 class getTov (GetGaz):
     """GET Tov      """
-
     def __init__ (self,DATE = False,TEST = False, PROXIE = False):
         """Initialize getTov object with basic patterns and other stuff
             DATE may be specified in ('yyyy','mm','dd')format"""
@@ -1187,10 +1185,6 @@ class getTov (GetGaz):
 
     def compileUrlsList (self):
         """finds and assigns urls to self.urls """
-        if self.TestRun:
-            self.urls = ['http://www.kiev-pravda.kiev.ua/index.php?article=3933&PHPSESSID=3ff637b17e1a7ee6c71479df20dc7655']
-            send_message( u'Ищем статьи...')
-            return
         send_message( u'Ищем статьи...')
         data = self.getData(self.work_URL)
         urls_to_look = ['',]
@@ -1328,16 +1322,18 @@ class getCV (GetGaz):
             DATE may be specified in ('yyyy','mm','dd')format"""
         GetGaz.__init__(self, DATE = False,TEST = False, PROXIE = False)
         #patterns
-        self.pattern_match_title = re.compile (r'<p class=ZAGOL30>(.+?)</p>',re.DOTALL)# Заголовок
-        self.pattern_match_author = re.compile (r'<p class=AVPOSADA>(.+?)</p>',re.DOTALL) # Автор
-        self.pattern_match_news_author = re.compile (r'',re.DOTALL)      # Автор новостей
-        self.pattern_match_content = re.compile  (r'<p class=VRIZ>(.+?)</p></td>',re.DOTALL) # Текст статьи
-        self.pattern_match_content2 = re.compile (r'<p class=TEXT>(.+?)</p> </td>',re.DOTALL) # Текст статьи2
-        self.pattern_match_content3 = re.compile (r'<p class=VRIZ>(.+?)</b></p></td>',re.DOTALL)
-        self.pattern_match_date = re.compile (r'',re.DOTALL) # Date
-        self.pattern_match_number = re.compile(r'<span style="font-size:14pt;">.+?(\d+)',re.DOTALL) # Номер Газеты
-        self.pattern_match_table = re.compile(r'<table.+?</table>',re.DOTALL)
-        self.pattern_match_data_url = re.compile(r'',re.DOTALL)
+        self.pattern_match_title = re.compile(r'<p class=ZAGOL30>(.+?)</p>', re.DOTALL)
+        self.pattern_match_author = re.compile(r'<p class=AVPOSADA>(.+?)</p>', re.DOTALL)
+        self.pattern_match_news_author = re.compile(r'', re.DOTALL)
+        self.pattern_match_content = [
+            re.compile(r'<p class=VRIZ>(.+?)</p></td>', re.DOTALL),
+            re.compile(r'<p class=TEXT>(.+?)</p> </td>', re.DOTALL),
+            re.compile(r'<p class=VRIZ>(.+?)</b></p></td>', re.DOTALL)
+        ]
+        self.pattern_match_date = re.compile(r'', re.DOTALL)
+        self.pattern_match_number = re.compile(r'<span style="font-size:14pt;">.+?(\d+)', re.DOTALL)
+        self.pattern_match_table = re.compile(r'<table.+?</table>', re.DOTALL)
+        self.pattern_match_data_url = re.compile(r'', re.DOTALL)
         #atribs
         self.main_URL = r'http://www.silskivisti.kiev.ua/'
         self.work_URL = self.main_URL
@@ -1355,23 +1351,6 @@ class getCV (GetGaz):
             if url not in clean_urls:
                 clean_urls.append(url)
         self.urls = [''.join((self.work_URL, url)) for url in clean_urls]
-
-    def getContent (self,url):
-        """Parse article content, overloads GetGaz.getContent
-           returns string containing article content stripped of garbage(at least trys)
-           or None"""
-        content = self.pattern_match_content.findall (self.data)
-        if not content:
-            content = self.pattern_match_content2.findall (self.data)
-        if not content:
-            content = self.pattern_match_content3.findall (self.data)
-        if content:
-            content = content[0]
-            for s1, s2 in self.content_substitution_pairs:
-                content = re.sub (s1, s2 ,content)
-            content = content.strip()
-            return content
-        return None
 
     def getData (self, url):
         """ Download data from url returns string of rawHTML"""
@@ -1407,7 +1386,7 @@ class getCV (GetGaz):
            #Need to be rewriten with os.path
         send_message('Writing to: ', os.path.join (self.PATH,self.fullFileName))
         try:
-            f = open (os.path.join (self.PATH,self.fullFileName),'w')
+            f = open(os.path.join (self.PATH,self.fullFileName),'w')
             try:
                 for article in self.gazeta:
                     f.write (article.encode('utf-8'))
@@ -1475,13 +1454,14 @@ class getCV (GetGaz):
         """
         metafunction making full paper processing
         Processes Gazet urls_list and writes to file"""
-        self.getNumber ()
-        self.makeName ()
+        self.getNumber()
+        self.makeName()
         self.compileUrlsList()
         if not self.urls:
             self.raiseError('articles_not_found')
             return
-        self.getPaper ()
+
+        self.getPaper()
         self.getZarubezh()
         self.getInformags()
         if self.gazeta:
